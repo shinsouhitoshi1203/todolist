@@ -1,0 +1,122 @@
+@use "sass:math" as math;
+@use "sass:map" as map;
+
+$grid-breakpoints: (
+    xs: 0,
+    xxl: 1400px,
+    xl: 1200px,
+    lg: 992px,
+    md: 768px,
+    sm: 576px
+);
+
+$container-max-widths: (
+    sm: 100%,
+    md: 540px,
+    lg: 720px,
+    xl: 960px,
+    xxl: 1170px,
+);
+
+$grid-columns: 12;
+$grid-gutter-width: 30px;
+$gutters: (
+    0: 0,
+    1: 0.25,
+    2: 0.5,
+    3: 1,
+    4: 1.5,
+    5: 3,
+);
+
+@mixin responsive($bp, $size) {
+    @if ($bp=="xs") {
+        @content;
+    } @else {
+        @media  (max-width: #{$size - 0.02px}) {
+            @content;
+        }
+    }
+}
+
+%container {
+    --gutter-x: #{$grid-gutter-width}; --gutter-y: 0;
+    margin-left: auto;margin-right: auto;
+}
+
+%padding-lr {
+    padding-left: calc(var(--gutter-x) / 2);
+    padding-right: calc(var(--gutter-x) / 2);
+}
+
+%margin-lr {
+    margin-left: calc(var(--gutter-x) / -2);
+    margin-right: calc(var(--gutter-x) / -2);
+}
+
+.container {
+    max-width: 1370px;
+    @extend %container;
+    @extend %padding-lr;
+    &-fluid {
+        @extend %container;
+    }
+}
+
+.row {
+    width: 100%;
+    display: flex; align-items: center; flex-wrap: wrap; 
+    @extend %margin-lr;
+    & > * {
+        margin-top: calc(var(--gutter-y) / 2);
+        @extend %padding-lr;
+        flex: 1 0;
+    }
+}        
+
+@mixin row-cols ($prefix) {
+    @for $i from 1 through 6 {         
+        .row-cols#{$prefix}-#{$i} > * {
+            flex: 0 0 auto; width: calc(100% / #{$i});
+        }
+    }
+}
+
+@mixin cols($prefix) {
+    @for $i from 1 through $grid-columns {
+        .col#{$prefix}-#{$i} {
+            flex: 0 0 auto; width: calc(100% / #{$grid-columns} * #{$i});
+        }
+    }
+}
+
+@mixin offset($prefix) {
+    @for $i from 0 through 5 {
+        .offset#{$prefix}-#{$i} {
+            flex: 0 0 auto; margin-left: calc(100% / #{$grid-columns} * #{$i});
+        }
+        
+    }
+}
+
+@mixin gutter($prefix) {
+    @each $lvl, $scale in $gutters {
+        .g#{$prefix}-#{$lvl}, .gx#{$prefix}-#{$lvl} {
+            --gutter-x: #{$grid-gutter-width * $scale};
+        }
+        .g#{$prefix}-#{$lvl}, .gy#{$prefix}-#{$lvl} {
+            --gutter-y: #{$grid-gutter-width * $scale};
+        }
+    }
+}
+
+@each $bp, $value in $grid-breakpoints {
+    @include responsive($bp, $value) {
+        $prefix : if($bp=="xs","","-"+$bp);
+        .container {max-width: map.get($container-max-widths, $bp)}
+        @include row-cols ($prefix);
+        @include cols ($prefix);
+        @include gutter ($prefix);
+        @include offset ($prefix);
+    }
+}

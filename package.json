@@ -1,0 +1,17 @@
+{
+  "dependencies": {
+    "firebase": "^11.0.2",
+    "sass": "^1.81.0"
+  },
+  "name": "todos",
+  "version": "1.0.0",
+  "description": "bruh it's just a boring to-do app",
+  "main": "index.js",
+  "devDependencies": {},
+  "scripts": {
+    "start": "sass ./assets/scss:./assets/css -w"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
