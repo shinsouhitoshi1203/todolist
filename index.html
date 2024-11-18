@@ -10,60 +10,49 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     <!-- styles -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="./assets/css/main.css">
-
+    <link rel="stylesheet" href="./assets/css/pages/index.css">
     <!-- modules -->
     <!-- scripts -->
 </head>
 <body>
     <header class="header">
-        <div class="container">shinsouhitoshi1203 / to-do list</div>
+        <div class="container">
+            <a href="./" class="header__title" title="shinsouhitoshi1203/to-do list">
+                <h1 class="d-block d-sm-none">shinsouhitoshi1203 / to-do list</h1>
+                <div class="webpage__icon d-none d-sm-block">
+                    <img src="./assets/favicons/favicon.svg" alt="shinsouhitoshi1203 / to-do list">
+                </div>
+            </a>
+            <div class="header__connect">
+                <a href="javascript:;" class="webpage__icon header__icons"><i class="fa-solid fa-circle-info"></i></a>
+                <a href="//github.com/shinsouhitoshi1203/todolist" class="webpage__icon header__icons"><i class="fa-solid fa-code-branch"></i></a>
+                <a href="//github.com/shinsouhitoshi1203/" class="webpage__icon header__icons"><i class="fa-brands fa-github"></i></a>
+                <button class="header__get-access button button__1">find your todos</button>
+            </div>
+            
+        </div>
     </header>
-    <div class="container">
-        <div class="row row-cols-4 row-cols-xl-3 row-cols-md-2 row-cols-sm-1 gx-0">
-            <div class="col">
-                <div class="box">Box</div>
-            </div>
-            <div class="col">
-                <div class="box">Box</div>
-            </div>
-            <div class="col">
-                <div class="box">Box</div>
-            </div>
-            <div class="col">
-                <div class="box">Box</div>
-            </div>
-            <div class="col col-8 col-xl-12 col-md-4 col-sm-12">
-                <div class="box">Box</div>
-            </div>
-            <div class="col">
-                <div class="box">Box</div>
-            </div>
-            <div class="col">
-                <div class="box">Box</div>
-            </div>
-            <div class="col">
-                <div class="box">Box</div>
-            </div>
-            <div class="col">
-                <div class="box">Box</div>
-            </div>
-            <div class="col">
-                <div class="box">Box</div>
-            </div>
-            <div class="col">
-                <div class="box">Box</div>
-            </div>
-            <div class="col">
-                <div class="box">Box</div>
+
+    <main class="main">
+        <div class="container__instruction ins__scrl scrl">
+            <div class="scrl__group">
+                <span>scroll down</span>
+                <div class="scrl__arrow"></div>
+                <span>to see more</span>
             </div>
         </div>
-    </div>
+        <div class="container">
+            <div class="main__app">
+                <div class="box" style="width: 300px;height: 200px;background: pink;"> This is a box</div>
+            </div>
+            <section >
+                <h2>Lorem ipsum dolor sit.</h2>
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Distinctio velit dolor aspernatur doloribus, totam a suscipit quo optio id recusandae facere maxime soluta quam! Perspiciatis eveniet eum ipsa nulla totam in odio, nihil dolores nemo ducimus eligendi laudantium autem delectus praesentium minus at corporis. Quisquam iste perspiciatis perferendis quis magni libero voluptatibus repudiandae qui ab animi a accusamus reiciendis amet ducimus sequi magnam odio deleniti, veniam est? Excepturi ullam animi quae praesentium. Possimus repudiandae explicabo veritatis optio nihil esse quae sapiente perferendis at neque? Sed tempore neque aliquam sint repellat voluptatibus voluptatum consectetur perferendis est. Quia blanditiis nam aut molestias.</p>
+            </section>
+        </div>
+    </main>
+    
 </body>
 </html>
-
-<style>
-    .box {
-        border: 1px solid #000;
-    }
-</style>

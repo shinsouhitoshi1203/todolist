@@ -1,0 +1,45 @@
+@use "./../utils" as o;
+main .container {position: relative; }
+
+.scrl {
+    z-index: -1;
+    position: absolute; width: calc(100%); height: calc(100vh - 60px); max-height: 700px; min-height: 400px;
+    
+    @include o.flex(flex-end, center);
+    &__group {
+        @include o.flex(flex-end, center, 15px);
+        font-size: 1.8rem;
+        span {margin-bottom: 7.5px;}
+    }
+    &__arrow {
+        width: 1px; height: clamp(23px, 10vh,40px); background: var(--color-main);
+        animation: scroll 1.5s infinite ease-in-out;
+        animation-fill-mode: forwards; transform: scaleY(0);
+    }
+}
+@keyframes scroll {
+    from {
+        transform-origin: bottom;
+        animation-timing-function: step-end;
+    }
+    1%{
+        transform: scaleY(0);
+    }
+    50% {
+        transform: scaleY(1);
+    }
+    51% {
+        transform-origin: top;
+        animation-timing-function: step-end;
+    }
+    90% {
+        transform: scaleY(0);
+    }
+
+    100% {
+        transform: scaleY(0);
+        transform-origin: bottom;
+        animation-timing-function: step-end;
+        
+    }
+}

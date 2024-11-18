@@ -1,0 +1,22 @@
+
+html {font-size: 62.5%;}
+body {font: {family: "Inter Tight", sans-serif; weight: 300; size: 1.6rem}; color: #413F3F}
+
+@media all and (min-width: 2500px) {
+    html::before {
+        content: "bro stop zooming the screen out"; font: {size: 5vh; family: Inter Tight};
+        display: block; position: fixed; 
+        top: 60px;
+        transform-origin: left;
+        translate: 30px 30px;
+        writing-mode: vertical-lr;
+    }
+    html::after {
+        content: "zoom in pleeeease 🥺";
+        font-size: 5vh;
+        font-family: Inter Tight;
+        display: block;
+        position: fixed;
+        right: 0;  top: 60px; writing-mode: vertical-rl; transform: translate(0,30px);
+    }
+}

@@ -1,0 +1,23 @@
+@use "sass:map";
+@use "./sizes" as d;
+
+@mixin flex($ai:null, $jc:$ai, $g:null) {
+    display: flex; align-items: $ai; justify-content: $jc; gap: $g;
+}
+
+@mixin transition ($duration, $timing:null, $props...) {
+    transition-property: $props;
+    transition-duration: .3s;
+    transition-timing-function: $timing;
+}
+
+@mixin responsive($bp) {
+    $vp: map.get(d.$breakpoints, $bp);
+    @if ($bp==xs) {
+        @content;
+    } @else {
+        @media all and (max-width: #{$vp - 0.02px}) {
+            @content;
+        }
+    }
+}

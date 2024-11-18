@@ -1,0 +1,20 @@
+@use "sass:map";
+@use "./sizes" as d;
+@use "./mixin" as o;
+
+@mixin display-option($bp) {
+    $prefix : if($bp==xs, "", "-"+$bp);
+    $list : none, initial, block, inline-flex, flex, grid;
+    @each $item in $list {
+        .d#{$prefix}-#{$item} {
+            display: #{$item}!important;
+            visibility: if($item==none, visible, null);
+        }
+    }
+}
+
+@each $bp, $vp in d.$breakpoints {
+    @include o.responsive($bp) {
+        @include display-option($bp);
+    }
+}

@@ -1,0 +1,7 @@
+@use "./../../utils" as o;
+.webpage {
+    &__icon {
+        @include o.flex(center);
+        img {width: 100%; height: 100%;}
+    }
+}

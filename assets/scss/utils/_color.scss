@@ -1,0 +1,29 @@
+html {
+    --color-main: #413F3F;
+    --color-main-trans: #413F3F99;
+    --color-secondary: #F4F4F4;
+    --color-secondary-trans: #F4F4F499;
+}
+
+
+// colors for each part
+html {
+    --bg: var(--color-secondary);
+    --txt: var(--color-secondary);
+    --txt2: var(--color-main);
+    --txt3: var(--color-secondary-trans);
+}
+
+// layouts
+html {
+    --bg-header: var(--color-main);
+}
+
+
+// components
+html {
+    --button-light: var(--color-secondary);
+    --button-light-txt: var(--color-main);
+    --button-dark: var(--color-main)
+    --button-dark-txt: var(--color-secondary)
+}

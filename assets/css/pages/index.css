@@ -1,0 +1,7 @@
+.main__app {
+  height: calc(100vh - 60px);
+  max-height: 700px;
+  min-height: 400px;
+}
+
+/*# sourceMappingURL=index.css.map */

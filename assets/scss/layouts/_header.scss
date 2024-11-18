@@ -1,0 +1,34 @@
+@use "./../utils" as o;
+
+.header {
+    background: var(--bg-header); color: var(--txt); 
+    padding-top: 10px; padding-bottom: 10px;
+    position: sticky; top: 0; z-index: 100;
+    .container {
+        @include o.flex(center, space-between); 
+    }
+
+    &__connect {@include o.flex(center, center ,12px);  }
+    &__icons {
+        color: var(--txt3); transition: color .3s;
+        &:hover {color: var(--txt);}
+    }
+
+    &__title {
+        display: inline-flex; align-items: center; position: relative; z-index: 1;
+        h1 {font: {size:1.6rem; weight: 400};}
+        .webpage__icon {
+            @include o.transition(0.3s, linear, scale);
+            &:hover {scale: 1.04;}
+        }
+        &::before { 
+            content: ""; display: block; position: absolute; top: 50%; left: 0; width: 100%; height: 2px; background: var(--txt3); transform-origin: right center; transition: transform .3s; transform: scaleX(0);
+            @include o.responsive(sm) {
+                display: none;
+            }
+        }
+        &:hover {
+            &::before {transform: scaleX(1); transform-origin: left center; }
+        }
+    }
+}
