@@ -4,6 +4,8 @@
   --second: #f4f4f4;
   --shadow: 15.965px 11.714px 53.373px 0px rgba(0, 0, 0, 0.20);
   --space: 16px;
+  --uncheck: #C4C4C4;
+  --check: #B5B5BA;
 }
 
 .todos__item, .todos__header, .todos__input {
@@ -130,16 +132,79 @@
 .todos__item-check {
   width: 20px;
   height: 20px;
-  border: 2px solid #C4C4C4;
+  border: 2px solid var(--uncheck);
   border-radius: 6px;
-  transition: border-color 0.3s;
   margin-right: 2px;
+  transition: border-color 0.3s, background 0.3s;
 }
 .todos__item-check:hover {
   border-color: var(--main-trans);
 }
 .todos__item-name {
+  position: relative;
   flex-grow: 1;
+}
+.todos__item-name span {
+  word-break: break-all;
+  width: fit-content;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  position: relative;
+}
+.todos__item-name span::after {
+  content: "";
+  display: block;
+  position: absolute;
+  width: 100%;
+  height: 1px;
+  background: #000;
+  bottom: -0.3px;
+  left: 0;
+  transition: transform 0.3s;
+  transform-origin: right center;
+  transform: scaleX(0);
+}
+.todos__item-name span:hover::after {
+  transform-origin: left center;
+  transform: scaleX(1);
+}
+.todos__item-edit {
+  z-index: 10;
+  background: var(--second);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+}
+.todos__item[item-status=done] .todos__item-check {
+  background: var(--check);
+  border-color: var(--check);
+  position: relative;
+}
+.todos__item[item-status=done] .todos__item-check:hover {
+  border-color: var(--main-trans);
+  background: var(--main-trans);
+}
+.todos__item[item-status=done] .todos__item-check::after {
+  content: "";
+  display: block;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+  width: 12px;
+  height: 8px;
+  background: url(./../img/checked.svg) center/contain no-repeat;
+}
+.todos__item[item-status=done] .todos__item-name {
+  color: var(--check);
+  text-decoration: line-through;
+}
+.todos__item[item-status=done] .todos__item-name span::after {
+  display: none;
 }
 
 /*# sourceMappingURL=todo.css.map */
