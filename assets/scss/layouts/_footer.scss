@@ -1,0 +1,7 @@
+@use "./../utils" as o;
+footer {
+    .container {
+        @include o.flex(center);
+        p {font-size: 1.4rem;}
+    }
+}

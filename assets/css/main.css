@@ -1472,6 +1472,15 @@ html {
   transform-origin: left center;
 }
 
+footer .container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+footer .container p {
+  font-size: 1.4rem;
+}
+
 main .container {
   position: relative;
 }

@@ -9,7 +9,7 @@
   "main": "index.js",
   "devDependencies": {},
   "scripts": {
-    "start": "sass ./assets/scss:./assets/css -w"
+    "start": "sass -w ./assets/scss:./assets/css ./app/scss:./app/src "
   },
   "keywords": [],
   "author": "",
