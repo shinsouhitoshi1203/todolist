@@ -1,0 +1,98 @@
+/// variables
+.app-todo {
+    --main: #413F3F;
+    --main-trans: #413F3F99;
+    --second: #f4f4f4;
+    --shadow: 15.965px 11.714px 53.373px 0px rgba(0, 0, 0, 0.20);
+    --space: 16px;
+
+}
+
+%li {
+    display: flex; align-items: center; gap: calc(var(--space) / 2);
+}
+%center {
+    display: flex; align-items: center;justify-content: center;
+}
+
+/// app: 
+.app-todo {
+
+    p {padding: 0; margin: 0; font-size: 1.4rem; font-weight: 400;}
+    button {cursor: pointer;}
+    i {font-size: 1.4rem;}
+
+    padding: 40px 30px; max-width: 400px; width: 80%; position: relative; aspect-ratio: 1/1;
+    background: var(--second); box-shadow: var(--shadow); font-weight: 400;
+    &::before{
+        content: ""; display: block; position: absolute; top: 0; left: 0;
+        aspect-ratio: 30.6/1;
+        width: 100%; background: url(./../img/layout.svg) center/cover no-repeat;
+    }
+}
+
+.todos {
+    &__wrapper {
+        display: flex; height: 100%; overflow: hidden;
+        flex-direction: column; 
+        gap: 12px;
+    }
+}
+
+.todos {
+    &__input {
+        padding: {top: 3px; bottom: 3px}; 
+        @extend %li; font-size: 1.4rem;
+        & > * {flex-shrink: 0;}
+        input {flex-grow: 1;}
+    }
+}
+//// view
+.todos {
+    &__view {flex-grow: 1; overflow: hidden}
+}
+.todos {
+    &__header{
+        @extend %li; margin-bottom: 18px;
+        & > * {flex-shrink: 0;}
+    }
+    &__separator {flex-grow: 1; height: 1px; background: #BCBCC370; margin: {left: 5px; right: 5px};}
+    &__number {
+        background: var(--main); color: var(--second); border-radius: 6px; @extend %center;
+        width: 20px;height: 20px; 
+        font: {size: 1.1rem; weight: 600};
+    }
+    &__title {font: {size: 1.5rem; weight: 700}; margin: 0;}
+}
+
+.todos {
+    &__button {
+        &-plain {
+            color: var(--main-trans);
+            transition: color .3s;
+            cursor: pointer;
+            &--posEnd {padding: 0;}
+            &:hover {
+                color: var(--main);
+            }
+        }
+    }
+    &__icon {
+        padding-right: 5px;
+        &--folder {margin-left: -3px; padding: 0;}
+    }
+}
+
+.todos {
+    &__list {display: grid; grid-gap: 16px;}
+    &__item {
+        @extend %li;
+        &-check {
+            width: 20px; height: 20px; border: 2px solid #C4C4C4; @extend %center; border-radius: 6px; transition:  border-color .3s; margin-right: 2px;
+            &:hover {
+                border-color: var(--main-trans);
+            }
+        }
+        &-name {flex-grow: 1;}
+    }
+}

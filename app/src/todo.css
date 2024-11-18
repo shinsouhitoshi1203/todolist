@@ -1,3 +1,145 @@
+.app-todo {
+  --main: #413F3F;
+  --main-trans: #413F3F99;
+  --second: #f4f4f4;
+  --shadow: 15.965px 11.714px 53.373px 0px rgba(0, 0, 0, 0.20);
+  --space: 16px;
+}
 
+.todos__item, .todos__header, .todos__input {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--space) / 2);
+}
+
+.todos__item-check, .todos__number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.app-todo {
+  padding: 40px 30px;
+  max-width: 400px;
+  width: 80%;
+  position: relative;
+  aspect-ratio: 1/1;
+  background: var(--second);
+  box-shadow: var(--shadow);
+  font-weight: 400;
+}
+.app-todo p {
+  padding: 0;
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 400;
+}
+.app-todo button {
+  cursor: pointer;
+}
+.app-todo i {
+  font-size: 1.4rem;
+}
+.app-todo::before {
+  content: "";
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  aspect-ratio: 30.6/1;
+  width: 100%;
+  background: url(./../img/layout.svg) center/cover no-repeat;
+}
+
+.todos__wrapper {
+  display: flex;
+  height: 100%;
+  overflow: hidden;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.todos__input {
+  padding-top: 3px;
+  padding-bottom: 3px;
+  font-size: 1.4rem;
+}
+.todos__input > * {
+  flex-shrink: 0;
+}
+.todos__input input {
+  flex-grow: 1;
+}
+
+.todos__view {
+  flex-grow: 1;
+  overflow: hidden;
+}
+
+.todos__header {
+  margin-bottom: 18px;
+}
+.todos__header > * {
+  flex-shrink: 0;
+}
+.todos__separator {
+  flex-grow: 1;
+  height: 1px;
+  background: rgba(188, 188, 195, 0.4392156863);
+  margin-left: 5px;
+  margin-right: 5px;
+}
+.todos__number {
+  background: var(--main);
+  color: var(--second);
+  border-radius: 6px;
+  width: 20px;
+  height: 20px;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+.todos__title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.todos__button-plain {
+  color: var(--main-trans);
+  transition: color 0.3s;
+  cursor: pointer;
+}
+.todos__button-plain--posEnd {
+  padding: 0;
+}
+.todos__button-plain:hover {
+  color: var(--main);
+}
+.todos__icon {
+  padding-right: 5px;
+}
+.todos__icon--folder {
+  margin-left: -3px;
+  padding: 0;
+}
+
+.todos__list {
+  display: grid;
+  grid-gap: 16px;
+}
+.todos__item-check {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #C4C4C4;
+  border-radius: 6px;
+  transition: border-color 0.3s;
+  margin-right: 2px;
+}
+.todos__item-check:hover {
+  border-color: var(--main-trans);
+}
+.todos__item-name {
+  flex-grow: 1;
+}
 
 /*# sourceMappingURL=todo.css.map */

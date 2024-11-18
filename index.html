@@ -46,7 +46,60 @@
         </div>
         <div class="container">
             <div class="main__app-container">
-                
+                <div id="todos" class="app-todo todos">
+                    <div class="todos__wrapper">
+                        <div class="todos__form">
+                            <div class="todos__input">
+                                <icon class="todos__icon"><i class="fa-solid fa-pen fa-sm"></i></icon>
+                                <input type="text" placeholder="What do you want to do">
+                                <button class="todos__button-plain todos__button-plain--posEnd"><i class="fa-solid fa-xmark"></i></button>
+                            </div>
+                        </div>
+                        <div class="todos__view">
+                            <div class="todos__header">
+                                <img src="./app/img/folder.svg" alt="active list" class="todos__icon todos__icon--folder">
+                                <p class="todos__title">active list</p>
+                                <div class="todos__separator"></div>
+                                <div class="todos__number">3</div>
+                            </div>
+                            <div class="todos__container">
+                                <div class="swiper" data-view="current">
+                                    <div class="swiper-wrapper">
+                                        <div class="swiper-slide">
+                                            <div class="todos__list">
+                                                <!-- where to put the data ... -->
+                                                <div class="todos__item">
+                                                    <button class="todos__item-check"></button>
+                                                    <p class="todos__item-name">do math assignments</p>
+                                                    <button class="todos__button-plain todos__button-plain--posEnd"><i class="fa-solid fa-xmark"></i></button>
+                                                </div>
+                                                
+                                                <div class="todos__item">
+                                                    <button class="todos__item-check"></button>
+                                                    <p class="todos__item-name">do math assignments</p>
+                                                    <button class="todos__button-plain todos__button-plain--posEnd"><i class="fa-solid fa-xmark"></i></button>
+                                                </div>
+
+                                                <div class="todos__item">
+                                                    <button class="todos__item-check"></button>
+                                                    <p class="todos__item-name">do math assignments</p>
+                                                    <button class="todos__button-plain todos__button-plain--posEnd"><i class="fa-solid fa-xmark"></i></button>
+                                                </div>
+                                                
+                                                <div class="todos__item">
+                                                    <button class="todos__item-check"></button>
+                                                    <p class="todos__item-name">do math assignments</p>
+                                                    <button class="todos__button-plain todos__button-plain--posEnd"><i class="fa-solid fa-xmark"></i></button>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             <section>
                 <h2>What the heck is this</h2>
