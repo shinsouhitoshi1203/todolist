@@ -33,7 +33,7 @@
     background: var(--second); box-shadow: var(--shadow); font-weight: 400;
     &::before{
         content: ""; display: block; position: absolute; top: 0; left: 0;
-        aspect-ratio: 30.6/1;
+        aspect-ratio: 30.6/1.3;
         width: 100%; background: url(./../img/layout.svg) center/cover no-repeat;
     }
 }
@@ -94,23 +94,29 @@
 
 /// status active
 .todos {
-    // status: active [default]
+    // general settings
     &__list {display: grid; grid-gap: 16px;}
     &__item {
         @extend %li;
         &-check {
-
-            width: 20px; height: 20px; border: 2px solid var(--uncheck);
+            width: 20px; height: 20px; border: 2px solid var(--uncheck); position: relative;
             @extend %center; border-radius: 6px;  margin-right: 2px;
             transition: border-color .3s, background .3s;
 
             &:hover {
                 border-color: var(--main-trans);
+                & + p>span::after {transform-origin: left center; transform: scaleX(1);}
+            }
+            &::after {
+                content : ""; display: none; position: absolute;
+                top: 50%; left: 50%; translate: -50% -50%; 
+                width: 12px;height: 8px; background: url(./../img/checked.svg) center / contain no-repeat;
             }
         }
         &-name {
             position: relative;
             flex-grow: 1; 
+            // real item's name with animation based on its size
             span { 
                 word-break: break-all; width: fit-content;
                 @include lim(1); position: relative;
@@ -125,7 +131,7 @@
                 }
             }
         }
-
+        // please note this is still in normal mode
         &-edit {
             z-index: 10;
             background: var(--second);
@@ -133,26 +139,74 @@
         }
 
     }
-    // status: checked
-    &__item {
-        &[item-status=done] &-check {
-            background: var(--check); border-color: var(--check);
-            position: relative;
-            &:hover {
-                border-color: var(--main-trans);
-                background: var(--main-trans);
+
+    ///////////////////////////////////////////////////
+    /// todos item with modification for each case  
+    /// ----------------------------------------------
+    /// to see the format for each option, uncollapse 
+    /// the codeblock.
+    ///////////////////////////////////////////////////
+    
+        // status: active
+        // --> display delete button, hide the txtbox and edit button
+        &__item {
+            &[todos-item-mode=normal] &-edit {
+                display: none;
             }
-            &::after {
-                content : ""; display: block; position: absolute;
-                top: 50%; left: 50%; translate: -50% -50%; 
-                width: 12px;height: 8px; background: url(./../img/checked.svg) center / contain no-repeat;
+            &[todos-item-mode=normal] button[todos-item-command=delete] {
+                display: block;
+            }
+            &[todos-item-mode=normal] button[todos-item-command=edit] {
+                display: none;
             }
         }
 
-        &[item-status=done] &-name {
-            color: var(--check);
-            text-decoration: line-through;
-            span::after {display: none;}
+        // status: done
+        // --> check the check button
+        // --> add line through to item's name, disable hover animation
+        // --> display buttons as in normal mode
+        &__item {
+            &[todos-item-status=done] &-check {
+                background: var(--check); border-color: var(--check);
+                position: relative;
+                &:hover {
+                    border-color: var(--main-trans);
+                    background: var(--main-trans);
+                }
+                &::after {
+                    display: block;
+                }
+            }
+
+            &[todos-item-status=done] &-name {
+                color: var(--check);
+                text-decoration: line-through;
+                span::after {display: none;}
+            }
+
+            &[todos-item-status=done] &-edit {
+                display: none;
+            }
+            &[todos-item-status=done] button[todos-item-command=delete] {
+                display: block;
+            }
+            &[todos-item-status=done] button[todos-item-command=edit] {
+                display: none;
+            }
+
         }
-    }
+
+        // status: active, edit mode
+        // --> display txtbox to edit and the button to check
+        &__item {
+            &[todos-item-mode=edit] &-edit {
+                display: block;
+            }
+            &[todos-item-mode=edit] button[todos-item-command=delete] {
+                display: none;
+            }
+            &[todos-item-mode=edit] button[todos-item-command=edit] {
+                display: block;
+            }
+        }
 }

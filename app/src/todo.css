@@ -48,7 +48,7 @@
   position: absolute;
   top: 0;
   left: 0;
-  aspect-ratio: 30.6/1;
+  aspect-ratio: 30.6/1.3;
   width: 100%;
   background: url(./../img/layout.svg) center/cover no-repeat;
 }
@@ -133,12 +133,28 @@
   width: 20px;
   height: 20px;
   border: 2px solid var(--uncheck);
+  position: relative;
   border-radius: 6px;
   margin-right: 2px;
   transition: border-color 0.3s, background 0.3s;
 }
 .todos__item-check:hover {
   border-color: var(--main-trans);
+}
+.todos__item-check:hover + p > span::after {
+  transform-origin: left center;
+  transform: scaleX(1);
+}
+.todos__item-check::after {
+  content: "";
+  display: none;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+  width: 12px;
+  height: 8px;
+  background: url(./../img/checked.svg) center/contain no-repeat;
 }
 .todos__item-name {
   position: relative;
@@ -179,32 +195,51 @@
   left: 0;
   width: 100%;
 }
-.todos__item[item-status=done] .todos__item-check {
+.todos__item[todos-item-mode=normal] .todos__item-edit {
+  display: none;
+}
+.todos__item[todos-item-mode=normal] button[todos-item-command=delete] {
+  display: block;
+}
+.todos__item[todos-item-mode=normal] button[todos-item-command=edit] {
+  display: none;
+}
+.todos__item[todos-item-status=done] .todos__item-check {
   background: var(--check);
   border-color: var(--check);
   position: relative;
 }
-.todos__item[item-status=done] .todos__item-check:hover {
+.todos__item[todos-item-status=done] .todos__item-check:hover {
   border-color: var(--main-trans);
   background: var(--main-trans);
 }
-.todos__item[item-status=done] .todos__item-check::after {
-  content: "";
+.todos__item[todos-item-status=done] .todos__item-check::after {
   display: block;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  translate: -50% -50%;
-  width: 12px;
-  height: 8px;
-  background: url(./../img/checked.svg) center/contain no-repeat;
 }
-.todos__item[item-status=done] .todos__item-name {
+.todos__item[todos-item-status=done] .todos__item-name {
   color: var(--check);
   text-decoration: line-through;
 }
-.todos__item[item-status=done] .todos__item-name span::after {
+.todos__item[todos-item-status=done] .todos__item-name span::after {
   display: none;
+}
+.todos__item[todos-item-status=done] .todos__item-edit {
+  display: none;
+}
+.todos__item[todos-item-status=done] button[todos-item-command=delete] {
+  display: block;
+}
+.todos__item[todos-item-status=done] button[todos-item-command=edit] {
+  display: none;
+}
+.todos__item[todos-item-mode=edit] .todos__item-edit {
+  display: block;
+}
+.todos__item[todos-item-mode=edit] button[todos-item-command=delete] {
+  display: none;
+}
+.todos__item[todos-item-mode=edit] button[todos-item-command=edit] {
+  display: block;
 }
 
 /*# sourceMappingURL=todo.css.map */

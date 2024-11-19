@@ -68,30 +68,47 @@
                                         <div class="swiper-slide">
                                             <div class="todos__list">
                                                 <!-- where to put the data ... -->
-                                                <div class="todos__item" item-status="active">
-                                                    <button class="todos__item-check" title="mark as done"></button>
-                                                    <p class="todos__item-name" title="">
-                                                        <input type="text" class="todos__item-edit">
-                                                        <span>finish dsa assignment before next saturday morning</span>
+                                                <div class="todos__item" todos-item-status="active" todos-item-mode="edit">
+                                                    <button class="todos__item-check" title="mark as done" todos-item-command="check"></button>
+                                                    <p class="todos__item-name" title="make an appointment">
+                                                        <input type="text" class="todos__item-edit" value="make an appointment">
+                                                        <span>make an appointment</span>
                                                     </p>
-                                                    <button class="todos__button-plain todos__button-plain--posEnd" title="delete this to-do"><i class="fa-solid fa-check"></i></button>
+                                                    <button class="todos__button-plain todos__button-plain--posEnd" title="delete this to-do" todos-item-command="delete">
+                                                        <i class="fa-solid fa-xmark"></i>
+                                                    </button>
+                                                    <button class="todos__button-plain todos__button-plain--posEnd" title="finish editing this to-do" todos-item-command="edit">
+                                                        <i class="fa-solid fa-check"></i>
+                                                    </button>
                                                 </div>
                                                 
-                                                <div class="todos__item" item-status="done">
-                                                    <button class="todos__item-check" title="mark as done"></button>
+                                                <div class="todos__item" todos-item-status="done" todos-item-mode="normal">
+                                                    <button class="todos__item-check" title="mark as done" todos-item-command="check"></button>
 
-                                                    <p class="todos__item-name">
-                                                        <span>do math assignments</span>
+                                                    <p class="todos__item-name" title="make an appointment">
+                                                        <input type="text" class="todos__item-edit">
+                                                        <span>make an appointment</span>
                                                     </p>
-                                                    <button class="todos__button-plain todos__button-plain--posEnd" title="delete this to-do"><i class="fa-solid fa-xmark"></i></button>
+                                                    <button class="todos__button-plain todos__button-plain--posEnd" title="delete this to-do" todos-item-command="delete">
+                                                        <i class="fa-solid fa-xmark"></i>
+                                                    </button>
+                                                    <button class="todos__button-plain todos__button-plain--posEnd" title="finish editing this to-do" todos-item-command="edit">
+                                                        <i class="fa-solid fa-check"></i>
+                                                    </button>
                                                 </div>
 
-                                                <div class="todos__item" item-status="active">
+                                                <div class="todos__item" todos-item-status="active" todos-item-mode="normal">
                                                     <button class="todos__item-check" title="mark as done"></button>
-                                                    <p class="todos__item-name">
-                                                        <span>do math assignments</span>
+                                                    <p class="todos__item-name" title="make an appointment">
+                                                        <input type="text" class="todos__item-edit">
+                                                        <span>make an appointment</span>
                                                     </p>
-                                                    <button class="todos__button-plain todos__button-plain--posEnd" title="delete this to-do"><i class="fa-solid fa-xmark"></i></button>
+                                                    <button class="todos__button-plain todos__button-plain--posEnd" title="delete this to-do" todos-item-command="delete">
+                                                        <i class="fa-solid fa-xmark"></i>
+                                                    </button>
+                                                    <button class="todos__button-plain todos__button-plain--posEnd" title="finish editing this to-do" todos-item-command="edit">
+                                                        <i class="fa-solid fa-check"></i>
+                                                    </button>
                                                 </div>
                                                 
 

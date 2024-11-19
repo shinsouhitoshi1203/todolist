@@ -153,10 +153,14 @@ html {
     display: grid !important;
   }
 }
+html {
+  background: #816f6f;
+}
+
 .main__app-container {
   height: calc(100vh - 60px);
   max-height: 700px;
-  min-height: 400px;
+  min-height: 500px;
   display: flex;
   align-items: center;
   justify-content: center;
