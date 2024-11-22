@@ -195,6 +195,35 @@
   left: 0;
   width: 100%;
 }
+.todos__filter {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 4px;
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+.todos__filter-item {
+  border: 1.5px solid var(--uncheck);
+  padding: 2px 5px;
+  font-weight: 600;
+  font-size: 1rem;
+  border-radius: 6px;
+  color: var(--uncheck);
+  transition: border-color 0.3s, background 0.3s, color 0.3s, filter 0.3s;
+}
+.todos__filter-item:hover:not(.todos__filter-item--selected) {
+  border-color: var(--main);
+  color: var(--main);
+}
+.todos__filter-item--selected {
+  background: var(--main);
+  border-color: var(--main);
+  color: var(--second);
+}
+.todos__filter-item--selected:hover {
+  filter: brightness(1.03);
+}
 .todos__item[todos-item-mode=normal] .todos__item-edit {
   display: none;
 }
