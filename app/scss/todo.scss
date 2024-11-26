@@ -59,11 +59,18 @@
 }
 //// view
 .todos {
-    &__view {flex-grow: 1; overflow: hidden}
+    &__view {
+        flex-grow: 1; overflow: hidden;
+        &-item {
+            display: flex; flex-direction: column; gap: 18px;
+        }
+    }
+
 }
 .todos {
     &__header{
-        @extend %li; margin-bottom: 18px;
+        @extend %li;
+        flex-shrink: 0;
         & > * {flex-shrink: 0;}
     }
     &__separator {flex-grow: 1; height: 1px; background: #BCBCC370; margin: {left: 5px; right: 5px};}
@@ -73,6 +80,7 @@
         font: {size: 1.1rem; weight: 600};
     }
     &__title {font: {size: 1.5rem; weight: 700}; margin: 0;}
+    &__container {flex-grow: 1; overflow: hidden}
 }
 
 .todos {
@@ -94,11 +102,20 @@
 }
 
 
+/// todo [swiper]
+.todos {
+    .swiper[todos-sliding-container="switch-mode"] {
+        overflow: hidden; height: 100%;
+    }
+    .swiper[todos-slide-view="active"] {
+        overflow: hidden; height: 100%;
+    }
+}
 
-/// status active
+/// todo views
 .todos {
     // general settings
-    &__list {display: grid; grid-gap: 16px;}
+    // &__list {display: grid; grid-gap: 16px;}
     &__item {
         @extend %li;
         &-check {
@@ -122,7 +139,7 @@
             // real item's name with animation based on its size
             span { 
                 word-break: break-all; width: fit-content;
-                @include lim(1); position: relative;
+                @include lim(1); position: relative; cursor: pointer;
                 &::after {
                     content: ""; display: block; position: absolute;
                     width: 100%; height: 1px; background: #000;
