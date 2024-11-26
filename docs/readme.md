@@ -18,7 +18,7 @@ this attribute only provides two values
 
 
 #### ・ attribute: `todos-item-mode`
-> indicate if the item is being edited. 
+> indicate if the item is being edivted. 
 
 this attribute only provides two values
 1. `normal`: there is no edit request, a `span` will be displayed.
