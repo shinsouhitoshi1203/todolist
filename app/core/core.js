@@ -11,7 +11,7 @@ function createStore( reducer ) {
     const appMap = new Map();
     function renderAll() {
         for (const [root, component] of appMap) {
-            root.innerHTML = component();
+            root.innerHTML = component().dom;
         }
     }
     return {
@@ -19,15 +19,15 @@ function createStore( reducer ) {
         attach(domNode, component) {
             appMap.set(domNode, component);
         },
-        render(root = "all") {
+        render(root = "all", callback = ()=>{}) {
             if (root == "all") {
                 renderAll();
             } else {
                 const component = appMap.get(root);
-                root.innerHTML = component();
+                const output = component();
+                root.innerHTML = output.getDOM();
+                callback(output.length);
             }
-            
-            
         },
         connect(selector = (state)=>state) { // connectWith (app), connectWith = connect(state=>{state})
             return (component)=>{ // connectWith (app)

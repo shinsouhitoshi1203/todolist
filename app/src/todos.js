@@ -45,15 +45,15 @@ const todo = (function () {
                 <div class="swiper" todos-sliding-container="switch-mode"> 
                     <div class="swiper-wrapper">
                         
-                        <div class="swiper-slide todos__view-item" todos-view-item="active" > ${null}
+                        <div class="swiper-slide todos__view-item" todos-view-item="active" >
                             <div class="todos__header">
                                 <img src="./../app/img/folder.svg" alt="active list" class="todos__icon todos__icon--folder">
                                 <p class="todos__title">active list</p>
                                 <div class="todos__separator"></div>
-                                <div class="todos__number">3</div>
+                                <div class="todos__number"></div>
                             </div>
                             <div class="todos__container">
-                                <div class="swiper" todos-slide-view="active"> ${null}
+                                <div class="swiper" todos-slide-view="active">
                                     <div class="todos__list">
                                         
                                         
@@ -159,15 +159,30 @@ const todo = (function () {
         return {
             renderActive(ul) {
                 ul = (Object.values(ul));
-                return HTML`${ul.map(
-                    (e)=>{
-                        return renderItem({itemType: "active", itemName: e.name, itemID: e.id})
-                    }
-                )}`
+                const htmlsDOM = HTML`${
+                    ul.filter(e=>e.status=="active").map(
+                        (e)=>{
+                            return renderItem({itemType: "active", itemName: e.name, itemID: e.id})
+                        }
+                    )
+                }`;
+                return {
+                    getDOM() {
+                        return htmlsDOM;
+                    },
+                    length: ul.length,
+                } 
             }
         }
     }
 
+    function updateListLength(nodeReal) {
+        return (number, node = nodeReal)=>{
+            const ping = nodeReal.querySelector(".todos__number");
+            ping.setAttribute("title", `There ${((number==1)?"is":"are")} ${number} active item${((number==1)?"":"s")}.`);
+            ping.innerText = ((number<10)?number:"9+");
+        }
+    }
 
     function start(option) {
         const {renderActive} = renderOption();
@@ -179,7 +194,7 @@ const todo = (function () {
                 break;
             case 0: default: 
                 attach (view.active.inner, connector(renderActive));
-                render (view.active.inner);
+                render (view.active.inner, updateListLength(view.active.container) );
                 break;
         }
     }
@@ -213,6 +228,22 @@ const todo = (function () {
             
             start(todoViewMode);
 
+            return {
+                addQuick(itemName) {
+                    function renderRequest(itemName) {
+                        const itemID = window.crypto.randomUUID();
+                        return {
+                            status: "active",
+                            id: itemID,
+                            status: itemName,
+                        }
+                    }
+                    
+                    const itemObj = renderRequest(itemName);
+                    dispatch("method:add", itemObj);
+                    start();
+                }
+            }
         }
         
     }
