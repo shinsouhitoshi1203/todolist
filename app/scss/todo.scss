@@ -76,7 +76,7 @@
     &__separator {flex-grow: 1; height: 1px; background: #BCBCC370; margin: {left: 5px; right: 5px};}
     &__number {
         background: var(--main); color: var(--second); border-radius: 6px; @extend %center;
-        width: 20px;height: 20px; 
+        width: 20px;height: 20px; cursor:default;
         font: {size: 1.1rem; weight: 600};
     }
     &__title {font: {size: 1.5rem; weight: 700}; margin: 0;}
