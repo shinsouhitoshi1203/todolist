@@ -1,6 +1,8 @@
 // import swiper from 'swiper';
 // import 'swiper/css';
-import Swiper from 'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.mjs'
+import Swiper from 'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.mjs';
+import { attach, connect, render, dispatch } from './../core/core.js';
+
 const todo = (function () {
     const $ = document.querySelector.bind(document);
     let id;
@@ -14,11 +16,9 @@ const todo = (function () {
     // dom objects
     let view;
 
-
     function HTML([f, ...subStr],...$$) {
         return subStr.reduce((a,s,i)=>a.concat($$[i], s),[f]).filter(e=>((e && e!==true)||e===0)).join("");
     }
-
     function clearNode() {
         
         objNode.classList.add("app-todo", "todos");
@@ -42,10 +42,10 @@ const todo = (function () {
             
         let main = HTML`
             <div class="todos__view">
-                <div class="swiper" todos-sliding-container="switch-mode">
+                <div class="swiper" todos-sliding-container="switch-mode"> 
                     <div class="swiper-wrapper">
-                        <div class="swiper-slide">Lorem</div>
-                        <div class="swiper-slide todos__view-item">
+                        
+                        <div class="swiper-slide todos__view-item" todos-view-item="active" > ${null}
                             <div class="todos__header">
                                 <img src="./../app/img/folder.svg" alt="active list" class="todos__icon todos__icon--folder">
                                 <p class="todos__title">active list</p>
@@ -53,16 +53,10 @@ const todo = (function () {
                                 <div class="todos__number">3</div>
                             </div>
                             <div class="todos__container">
-                                <div class="swiper" todos-slide-view="active">
+                                <div class="swiper" todos-slide-view="active"> ${null}
                                     <div class="todos__list">
-                                        ${renderItem({itemType: "active", itemName: "job 1"})}
-                                        ${renderItem({itemType: "active", itemName: "go to cgv cinema d.10"})}
-                                        ${renderItem({itemType: "active", itemName: "go to cgv cinema d.10"})}
-                                        ${renderItem({itemType: "active", itemName: "go to cgv cinema d.10"})}
-                                        ${renderItem({itemType: "active", itemName: "go to cgv cinema d.10"})}
-                                        ${renderItem({itemType: "active", itemName: "job 5"})}
-                                        ${renderItem({itemType: "active", itemName: "job 6"})}
-                                        ${renderItem({itemType: "active", itemName: "job 7"})}
+                                        
+                                        
                                     </div>
                                 </div>
                             </div>
@@ -84,24 +78,31 @@ const todo = (function () {
 
         objNode.innerHTML = htmls;
     }
-            {/* <div class="todos__list">
-                ${renderItem({itemType: "active", itemName: "go to cgv cinema d.10"})}
-                ${renderItem({itemType: "active", itemName: "go to cgv cinema d.10"})}
-                ${renderItem({itemType: "active", itemName: "wet theshuvhsdgjksvkjsd"})}
-                ${renderItem({itemType: "active", itemName: "Lorem ipsum"})}
-                ${renderItem({itemType: "active", itemName: "go to cgv cinema d.10"})}
-                ${renderItem({itemType: "active", itemName: "Lorem ipsum"})}
-            </div> */}
-    function identify() {
-        
+    {/* <div class="todos__list">
+        ${renderItem({itemType: "active", itemName: "go to cgv cinema d.10"})}
+        ${renderItem({itemType: "active", itemName: "go to cgv cinema d.10"})}
+        ${renderItem({itemType: "active", itemName: "wet theshuvhsdgjksvkjsd"})}
+        ${renderItem({itemType: "active", itemName: "Lorem ipsum"})}
+        ${renderItem({itemType: "active", itemName: "go to cgv cinema d.10"})}
+        ${renderItem({itemType: "active", itemName: "Lorem ipsum"})}
+    </div> */}
+    function identify() { 
         objNode.setAttribute("todos-id", id);
-        view = objNode.querySelector(".todos__view");
-    }
+        view = {
+            container: objNode.querySelector(".todos__view"),
+            active: {
+                container: objNode.querySelector(`.todos__view-item[todos-view-item="active"]`),
+                inner: objNode.querySelector(`div.swiper[todos-slide-view="active"] .todos__list`),
+            } 
+            
 
-    function renderItem ({itemType, itemName}) {
+        }
+
+    }
+    function renderItem ({itemType, itemName, itemID}) {
         switch (itemType) {
             case 'active':
-                return HTML`<div class="swiper-slide">
+                return HTML`<div class="swiper-slide" todos-item-id="${itemID}">
                     <div class="todos__item" todos-item-status="active" todos-item-mode="normal">
                         <button class="todos__item-check" title="mark as done"></button>
                         <p class="todos__item-name" title="${itemName}">
@@ -119,7 +120,6 @@ const todo = (function () {
                 break;
         }
     }
-
     function includeSwiper() {
         swiperMap.switchMode = new Swiper (`div[todos-id="${id}"] .swiper[todos-sliding-container="switch-mode"]`, {
             slidesPerView: 1,
@@ -139,6 +139,7 @@ const todo = (function () {
                 }
             }
         });
+        
         swiperMap.slideViewCurrent = new Swiper (`div[todos-id="${id}"] .swiper[todos-slide-view="active"]`, {
             direction: 'vertical',
             speed: 500,
@@ -149,11 +150,41 @@ const todo = (function () {
             mousewheel: {
                 enabled: true,
                 releaseOnEdges: true,
-            }
+            },
+            
         });
     }
 
-    return function (node) {
+    function renderOption() {
+        return {
+            renderActive(ul) {
+                ul = (Object.values(ul));
+                return HTML`${ul.map(
+                    (e)=>{
+                        return renderItem({itemType: "active", itemName: e.name, itemID: e.id})
+                    }
+                )}`
+            }
+        }
+    }
+
+
+    function start(option) {
+        const {renderActive} = renderOption();
+        const connector = connect();
+        switch (option=0) {
+            case 1: 
+                attach (view.done.inner, connector(renderDone));
+                render (view.done.inner);
+                break;
+            case 0: default: 
+                attach (view.active.inner, connector(renderActive));
+                render (view.active.inner);
+                break;
+        }
+    }
+
+    return function (node, {defaultMode} = {}) {
         if (!node) {
             throw new Error ("Cannot identify object")
         } else {
@@ -161,9 +192,27 @@ const todo = (function () {
             objNode = node;
             clearNode();
             identify();
-
             includeSwiper();
-            setTimeout(()=>swiperMap.switchMode.slideNext(),3000) // only for quick access
+            
+            /// connect to store
+            if (!defaultMode) {
+                todoViewMode = 1; 
+            } else {
+                switch (defaultMode) {
+                    case "all":
+                        todoViewMode = 2; 
+                        break;
+                    case "done":case "completed":
+                        todoViewMode = 1; 
+                        break;
+                    case "active": default:
+                        todoViewMode = 0;
+                        break;
+                }
+            }
+            
+            start(todoViewMode);
+
         }
         
     }

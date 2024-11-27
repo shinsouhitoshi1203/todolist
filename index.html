@@ -54,7 +54,7 @@
             </div>
             <section>
                 <h2>What the heck is this</h2>
-                <p>A web application that is <i>terribly</i> made, using firebase and <span style="text-decoration: line-through;">pure js</span> </p>
+                <p>A web application that is <i>terribly</i> made, using  <span style="text-decoration: line-through;">pure js</span> </p>
             </section>
         </div>
     </main>
@@ -68,9 +68,12 @@
 </body>
 </html>
 <script type="module" >
+    // import todo app
     import todo from "./app/src/todos.js";
     const $ = document.querySelector.bind(document);
     const todos = new todo($('#todos'));
+    console.log(todos)
+    
 </script>
 
 <!-- <div id="todos" class="app-todo todos">
