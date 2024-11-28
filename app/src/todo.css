@@ -156,11 +156,19 @@ a {
   padding: 0;
 }
 
-.todos .swiper[todos-sliding-container=switch-mode] {
+.todos .swiper[todos-slide-view=active] {
   overflow: hidden;
   height: 100%;
 }
-.todos .swiper[todos-slide-view=active] {
+.todos .swiper[todos-slide-view=done] {
+  overflow: hidden;
+  height: 100%;
+}
+.todos .swiper[todos-slide-view=all] {
+  overflow: hidden;
+  height: 100%;
+}
+.todos .swiper[todos-sliding-container=switch-mode] {
   overflow: hidden;
   height: 100%;
 }
