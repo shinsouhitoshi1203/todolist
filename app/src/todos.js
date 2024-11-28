@@ -138,7 +138,6 @@ const todo = (function () {
 
     }
     function renderItem ({itemType, itemName, itemID}) {
-        console.log(itemType)
         switch (itemType) {
             case 'done':
                 return HTML`<div class="swiper-slide" todos-item-id="${itemID}">
@@ -321,13 +320,11 @@ const todo = (function () {
         }
         jumpToTab(idTab);
         todoViewMode = idTab;
-        console.log(idTab);
         swiperMap.switchMode.slideTo(idTab);
     }
 
     function switchTabButton(option) {
         objNode.querySelectorAll('.todos__filter-item').forEach(el=>el.classList.remove("todos__filter-item--selected"));
-        console.log(option)
         switch (option) {
             case "all": 
                 objNode.querySelector('.todos__filter-item[todos-filter-option="all"]').classList.add("todos__filter-item--selected");
