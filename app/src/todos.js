@@ -534,7 +534,7 @@ const todo = (function () {
             }
         })
     }
-
+    // test
     return function (node, {defaultMode} = {}) {
         if (!node) {
             throw new Error ("Cannot identify object")
