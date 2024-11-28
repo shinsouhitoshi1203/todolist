@@ -5,6 +5,12 @@ import { attach, connect, render, dispatch } from './../core/core.js';
 
 const todo = (function () {
     const $ = document.querySelector.bind(document);
+    const $$ = document.querySelectorAll.bind(document);
+    // messages
+    const TXT = {
+        empty: "<p style='text-align: center; font-size: 35px; font-weight: 600; color: #bbbbbb'>¯\\_(ツ)_/¯</p><br><p style='text-align: center; color: #bbbbbb'>There is no todo right now. Wanna add one?</p>",
+
+    }
     let id;
     let todoViewMode = 0;
     // 0: active, 1: completed, 2: all;
@@ -34,7 +40,7 @@ const todo = (function () {
                 </div>
                 <div class="todos__filter">
                     <button class="todos__filter-item" todos-filter-option="active">active</button>
-                    <button class="todos__filter-item todos__filter-item--selected" todos-filter-option="completed">completed</button>
+                    <button class="todos__filter-item" todos-filter-option="completed">completed</button>
                     <button class="todos__filter-item" todos-filter-option="all">all</button>
                 </div>
             </div>`;
@@ -54,13 +60,37 @@ const todo = (function () {
                             </div>
                             <div class="todos__container">
                                 <div class="swiper" todos-slide-view="active">
-                                    <div class="todos__list">
-                                        
-                                        
-                                    </div>
+                                    <div class="todos__list"></div>
                                 </div>
                             </div>
+                        </div>
 
+                        <div class="swiper-slide todos__view-item" todos-view-item="completed" >
+                            <div class="todos__header">
+                                <img src="./../app/img/folder.svg" alt="active list" class="todos__icon todos__icon--folder">
+                                <p class="todos__title">completed</p>
+                                <div class="todos__separator"></div>
+                                <div class="todos__number"></div>
+                            </div>
+                            <div class="todos__container">
+                                <div class="swiper" todos-slide-view="completed">
+                                    <div class="todos__list"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="swiper-slide todos__view-item" todos-view-item="all" >
+                            <div class="todos__header">
+                                <img src="./../app/img/folder.svg" alt="active list" class="todos__icon todos__icon--folder">
+                                <p class="todos__title">all todos</p>
+                                <div class="todos__separator"></div>
+                                <div class="todos__number"></div>
+                            </div>
+                            <div class="todos__container">
+                                <div class="swiper" todos-slide-view="all">
+                                    <div class="todos__list"></div>
+                                </div>
+                            </div>
                         </div>
                         
                     </div>
@@ -94,8 +124,6 @@ const todo = (function () {
                 container: objNode.querySelector(`.todos__view-item[todos-view-item="active"]`),
                 inner: objNode.querySelector(`div.swiper[todos-slide-view="active"] .todos__list`),
             } 
-            
-
         }
 
     }
@@ -159,14 +187,22 @@ const todo = (function () {
         return {
             renderActive(ul) {
                 ul = (Object.values(ul));
-                const htmlsDOM = HTML`${
-                    ul.filter(e=>e.status=="active").map(
-                        (e)=>{
-                            return renderItem({itemType: "active", itemName: e.name, itemID: e.id})
-                        }
-                    )
-                }`;
+                ul = ul.filter(e=>e.status=="active");
+                let htmlsDOM = "";
+                if (ul.length > 0 ) {
+                    htmlsDOM = HTML`${
+                        ul.map(
+                            (e)=>{
+                                return renderItem({itemType: "active", itemName: e.name, itemID: e.id})
+                            }
+                        )
+                    }`;
+                } else {
+                    htmlsDOM = TXT.empty;
+                }
+                
                 return {
+                    // ¯\_(ツ)_/¯ is superior to the shrug emoji
                     getDOM() {
                         return htmlsDOM;
                     },
@@ -179,11 +215,23 @@ const todo = (function () {
     function updateListLength(nodeReal) {
         return (number, node = nodeReal)=>{
             const ping = nodeReal.querySelector(".todos__number");
-            ping.setAttribute("title", `There ${((number==1)?"is":"are")} ${number} active item${((number==1)?"":"s")}.`);
+            ping.setAttribute("title", `There ${((number<2)?"is":"are")} ${number} active item${((number<2)?"":"s")}.`);
             ping.innerText = ((number<10)?number:"9+");
         }
     }
-
+    function switchTab(option) {
+        switch (option) {
+            case "all": 
+                attach (view.done.inner, connector(renderDone));
+                render (view.done.inner);
+                break;
+            case "active": default: 
+                objNode.querySelectorAll('.todos__filter-item').forEach(el=>el.classList.remove("todos__filter-item--selected"));
+                objNode.querySelector('.todos__filter-item[todos-filter-option="active"]').classList.add("todos__filter-item--selected");
+                swiperMap.slideViewCurrent.slideTo(0);
+                break;
+        }
+    }
     function start(option) {
         const {renderActive} = renderOption();
         const connector = connect();
@@ -195,6 +243,7 @@ const todo = (function () {
             case 0: default: 
                 attach (view.active.inner, connector(renderActive));
                 render (view.active.inner, updateListLength(view.active.container) );
+                switchTab("active");
                 break;
         }
     }
@@ -228,6 +277,8 @@ const todo = (function () {
             
             start(todoViewMode);
 
+            //runEvent();
+
             return {
                 addQuick(itemName) {
                     function renderRequest(itemName) {
@@ -241,7 +292,10 @@ const todo = (function () {
                     
                     const itemObj = renderRequest(itemName);
                     dispatch("method:add", itemObj);
-                    start();
+                    //start();
+                },
+                switchNext() {
+                    swiperMap.switchMode.slideNext();
                 }
             }
         }

@@ -4,62 +4,12 @@ function init() {
             {
                 id: "vjivioi849-343423-222-33s3",
                 name: "Make a cupcake dish",
-                status: "active"
+                status: "done"
             },
             {
                 id: "44rfvvccc-33ecddd-33dd-ccd",
                 name: "Finish task 3 / chapter 32",
-                status: "active"
-            },
-            {
-                id: "44rfvvccc-33ecddd-33dd-ccd",
-                name: "Finish task 3 / chapter 32",
-                status: "active"
-            },
-            {
-                id: "44rfvvccc-33ecddd-33dd-ccd",
-                name: "Finish task 3 / chapter 32",
-                status: "active"
-            },
-            {
-                id: "44rfvvccc-33ecddd-33dd-ccd",
-                name: "Finish task 3 / chapter 32",
-                status: "active"
-            },
-            {
-                id: "44rfvvccc-33ecddd-33dd-ccd",
-                name: "Finish task 3 / chapter 32",
-                status: "active"
-            },
-            {
-                id: "44rfvvccc-33ecddd-33dd-ccd",
-                name: "Finish task 3 / chapter 32",
-                status: "active"
-            },
-            {
-                id: "44rfvvccc-33ecddd-33dd-ccd",
-                name: "Finish task 3 / chapter 32",
-                status: "active"
-            },
-            {
-                id: "44rfvvccc-33ecddd-33dd-ccd",
-                name: "Finish task 3 / chapter 32",
-                status: "active"
-            },
-            {
-                id: "44rfvvccc-33ecddd-33dd-ccd",
-                name: "Finish task 3 / chapter 32",
-                status: "active"
-            },
-            {
-                id: "44rfvvccc-33ecddd-33dd-ccd",
-                name: "Finish task 3 / chapter 32",
-                status: "active"
-            },
-            {
-                id: "44rfvvccc-33ecddd-33dd-ccd",
-                name: "Finish task 3 / chapter 32",
-                status: "active"
+                status: "done"
             },
         ]
     }
