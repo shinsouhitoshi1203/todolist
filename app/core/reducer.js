@@ -11,6 +11,11 @@ function init() {
                 name: "Finish task 3 / chapter 32",
                 status: "done"
             },
+            {
+                id: "de4vvvffd-33ecddd-eeef-tee",
+                name: "Order a hamburger",
+                status: "active"
+            },
         ]
     }
 }

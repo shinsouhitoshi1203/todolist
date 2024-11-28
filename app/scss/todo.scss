@@ -104,12 +104,16 @@
 
 /// todo [swiper]
 .todos {
+    $swiper-list:"active", "done", "all";
+    @each $swiper-object in $swiper-list {
+        .swiper[todos-slide-view=#{$swiper-object}] {
+            overflow: hidden; height: 100%;
+        }
+    }
     .swiper[todos-sliding-container="switch-mode"] {
         overflow: hidden; height: 100%;
     }
-    .swiper[todos-slide-view="active"] {
-        overflow: hidden; height: 100%;
-    }
+    
 }
 
 /// todo views

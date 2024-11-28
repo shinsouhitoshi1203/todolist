@@ -25,6 +25,7 @@ function createStore( reducer ) {
             } else {
                 const component = appMap.get(root);
                 const output = component();
+                console.log(output)
                 root.innerHTML = output.getDOM();
                 callback(output.length);
             }
