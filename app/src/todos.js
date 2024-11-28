@@ -8,8 +8,7 @@ const todo = (function () {
     const $$ = document.querySelectorAll.bind(document);
     // messages
     const TXT = {
-        empty: "<p style='text-align: center; font-size: 35px; font-weight: 600; color: #bbbbbb'>¯\\_(ツ)_/¯</p><br><p style='text-align: center; color: #bbbbbb'>There is no todo right now. Wanna add one?</p>",
-
+        empty: "<div todos-message='nothing'><p style='text-align: center; font-size: 35px; font-weight: 600; color: #bbbbbb'>¯\\_(ツ)_/¯</p><br><p style='text-align: center; color: #bbbbbb'>There is no todo right now. Wanna add one?</p></div>",
     }
     let id;
     let todoViewMode = 0;
@@ -21,6 +20,8 @@ const todo = (function () {
     }
     // dom objects
     let view;
+    let formControls;
+
 
     function HTML([f, ...subStr],...$$) {
         return subStr.reduce((a,s,i)=>a.concat($$[i], s),[f]).filter(e=>((e && e!==true)||e===0)).join("");
@@ -33,8 +34,8 @@ const todo = (function () {
                     <icon class="todos__icon">
                         <i class="fa-solid fa-pen fa-sm"></i>
                     </icon>
-                    <input type="text" placeholder="What do you want to do">
-                    <button class="todos__button-plain todos__button-plain--posEnd">
+                    <input type="text" todos-input-for="${id}" placeholder="What do you want to do">
+                    <button class="todos__button-plain todos__button-plain--posEnd" todos-form-command="clear">
                         <i class="fa-solid fa-xmark"></i>
                     </button>
                 </div>
@@ -109,6 +110,8 @@ const todo = (function () {
         </div>`;
 
         objNode.innerHTML = htmls;
+
+        
     }
     {/* <div class="todos__list">
         ${renderItem({itemType: "active", itemName: "go to cgv cinema d.10"})}
@@ -135,7 +138,14 @@ const todo = (function () {
                 inner: objNode.querySelector(`div.swiper[todos-slide-view="done"] .todos__list`),
             }, 
         }
+        formControls = {
+            form: {
+                input: objNode.querySelector(`input[todos-input-for="${id}"]`),
 
+                clear: objNode.querySelector('button[todos-form-command="clear"]')
+
+            },
+        }
     }
     function renderItem ({itemType, itemName, itemID}) {
         switch (itemType) {
@@ -295,33 +305,154 @@ const todo = (function () {
     }
 
     function updateListLength(nodeReal, typeofTodo = "active") {
-        return (number)=>{
+        function real(number) {
             const ping = nodeReal.querySelector(".todos__number");
+            ping.setAttribute(`todos-${typeofTodo}-number`, number);
             ping.setAttribute("title", `There ${((number<2)?"is":"are")} ${number} ${typeofTodo}${(typeofTodo=="") ? "" : " "}item${((number<2)?"":"s")}.`);
             ping.innerText = ((number<10)?number:"9+");
         }
-    }
-    function requestSwitchTab(tabBtn) {
-        let idTab = 0;
-        if (typeof tabBtn == "object") {
-            switch (tabBtn.getAttribute("todos-filter-option")) {
-                case "all":
-                    idTab = 2;
-                    break;
-                case "completed":
-                    idTab = 1;
-                    break;
-                case "active":default:
-                    idTab = 0;
-                    break;
-            }
-        } else {
-            idTab = tabBtn;
+        function getCurrentNumber() {
+            const ping = nodeReal.querySelector(".todos__number");
+            return ping.getAttribute(`todos-${typeofTodo}-number`);
         }
-        jumpToTab(idTab);
-        todoViewMode = idTab;
-        swiperMap.switchMode.slideTo(idTab);
+        return (number = -1)=>{
+            if (number == -1) {
+                number = getCurrentNumber()*1 + 1;
+                real(number);
+            } else {
+                real(number);
+            }
+        }
     }
+
+    // input from form 
+    const formOption = {
+        clearInput(obj = formControls.form.input) {
+            obj.value = "";
+            obj.focus();
+        },
+        lockInput (obj = formControls.form.input) {
+            obj.disabled = true;
+        },
+        unlockInput (obj = formControls.form.input) {
+            obj.disabled = false;
+        },
+        setClearButton(value = false) {
+            value = (value?"remove":"add");
+            formControls.form.clear.classList[value]("app-todo__disable-obj");
+        },
+        reset() {
+            this.clearInput();
+            this.unlockInput();
+            this.setClearButton();
+        }
+    }
+
+    // request stuff
+    const request = {
+        switchTab(tabBtn, fromButton=false) {
+            
+            let idTab = 0;
+            if (typeof tabBtn == "object") {
+                switch (tabBtn.getAttribute("todos-filter-option")) {
+                    case "all":
+                        idTab = 2;
+                        break;
+                    case "completed":
+                        idTab = 1;
+                        break;
+                    case "active":default:
+                        idTab = 0;
+                        break;
+                }
+            } else {
+                idTab = tabBtn;
+            }
+            if ((idTab===todoViewMode) && (fromButton)) return true;
+            jumpToTab(idTab);
+            todoViewMode = idTab;
+            swiperMap.switchMode.slideTo(idTab);
+        },
+        // add an Item by DOM node
+        addItem(obj) {
+            function exportData(itemName) {
+                const id = window.crypto.randomUUID();
+                return {
+                    id,
+                    name: itemName,
+                    status: "active"
+                }
+            }
+            const itemName = obj.value;
+            if (itemName!="") {
+                const data = exportData(itemName);
+                new Promise (
+                    function (resolve, reject) {
+                        dispatch("method:add", data);
+                        formOption.lockInput(obj);
+                        resolve(data);
+                    }
+                ).then(
+                    function (data) {
+                        request.fakeRender(data);
+                        request.fakeUpdate();
+                        formOption.unlockInput(obj);
+                        formOption.clearInput(obj);
+                    }
+                )
+            } 
+        },
+        fakeRender(data) {
+            if (todoViewMode == 0 || todoViewMode == 2 ) {
+                const sw = swiperMap[`slideView${(todoViewMode==0)?"Current":"All"}`];
+                const inner = view[`${(todoViewMode==0)?"active":"all"}`].inner;
+                if (inner.querySelector("div[todos-message='nothing']")) {
+                    inner.innerHTML = "";
+                    sw.update();
+                }
+                sw.appendSlide(
+                    renderItem (
+                        {
+                            itemType: data.status,
+                            itemName: data.name, 
+                            itemID: data.id
+                        }
+                    )
+                )
+            }
+        },
+        fakeUpdate(typeofTodo) {
+            if ([0,2].includes(todoViewMode)) {
+                if (todoViewMode==0) {
+                    updateListLength(view.active.container,"active")();
+                } else {
+                    updateListLength(view.all.container,"all")();
+                }
+            }
+        }
+    }
+
+    // function requestSwitchTab(tabBtn) {
+    //     let idTab = 0;
+    //     if (typeof tabBtn == "object") {
+    //         switch (tabBtn.getAttribute("todos-filter-option")) {
+    //             case "all":
+    //                 idTab = 2;
+    //                 break;
+    //             case "completed":
+    //                 idTab = 1;
+    //                 break;
+    //             case "active":default:
+    //                 idTab = 0;
+    //                 break;
+    //         }
+    //     } else {
+    //         idTab = tabBtn;
+    //     }
+    //     jumpToTab(idTab);
+    //     todoViewMode = idTab;
+    //     swiperMap.switchMode.slideTo(idTab);
+    // }
 
     function switchTabButton(option) {
         objNode.querySelectorAll('.todos__filter-item').forEach(el=>el.classList.remove("todos__filter-item--selected"));
@@ -343,7 +474,7 @@ const todo = (function () {
 
     function jumpToTab(option) {
         const {renderActive, renderAll, renderDone} = renderOption();
-        const connector = connect();
+        const connector = connect((state)=>state.todoList);
         switch (option) {
             case 2: 
                 attach (view.all.inner, connector(renderAll));
@@ -367,10 +498,39 @@ const todo = (function () {
     }
 
     function runEvent() {
+        // click
         objNode.addEventListener("click", function (e) {
             const obj = e.target;
             if (obj.matches("button.todos__filter-item")) {
-                requestSwitchTab(obj);
+                request.switchTab(obj,true);
+            } else if (obj.matches('button[todos-form-command="clear"]')) {
+                formOption.clearInput();
+            }
+        })
+        // keypress
+        objNode.addEventListener("input", function (e) {
+            const obj = e.target;
+            const key = e.key;
+            if (obj.matches(`input[todos-input-for="${id}"]`)) {
+                // add new object
+                if (key!="Enter") {
+                    if (obj.value!="") {
+                        formOption.setClearButton(true);
+                    } else {
+                        formOption.setClearButton(false);
+                    }
+                }
+            }
+        })
+        // keydown
+        objNode.addEventListener("keydown", function (e) {
+            const obj = e.target;
+            const key = e.key;
+            if (obj.matches(`input[todos-input-for="${id}"]`)) {
+                // add new object
+                if (key=="Enter") {
+                    request.addItem(obj);
+                }
             }
         })
     }
@@ -401,8 +561,9 @@ const todo = (function () {
                         break;
                 }
             }
-            
-            requestSwitchTab(todoViewMode);
+
+            formOption.reset();
+            request.switchTab(todoViewMode);
 
             runEvent();
 

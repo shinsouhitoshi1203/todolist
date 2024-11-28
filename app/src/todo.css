@@ -73,6 +73,9 @@ a {
   width: 100%;
   background: url(./../img/layout.svg) center/cover no-repeat;
 }
+.app-todo__disable-obj {
+  display: none;
+}
 
 .todos__wrapper {
   display: flex;
