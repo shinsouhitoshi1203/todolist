@@ -1,8 +1,8 @@
 // import swiper from 'swiper';
 // import 'swiper/css';
 import Swiper from 'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.mjs';
-import { attach, connect, render, dispatch } from './../core/core.js';
-
+// import { attach, connect, render, dispatch } from './../core/core.js';
+import { initStore } from '../core/core.js';
 const todo = (function () {
     const $ = document.querySelector.bind(document);
     const $$ = document.querySelectorAll.bind(document);
@@ -355,8 +355,10 @@ const todo = (function () {
 
     // request stuff
     const request = function (appData) {
+        const { dispatch } = appData;
+        const { todoViewMode, swiperMap, view } = appData;
         return {
-            switchTab(tabBtn = appData.todoViewMode, fromButton=false) {
+            switchTab(tabBtn = todoViewMode, fromButton=false) {
                 const {todoViewMode} = appData;
                 let idTab = 0;
                 if (typeof tabBtn == "object") {
@@ -395,15 +397,15 @@ const todo = (function () {
                     new Promise (
                         function (resolve, reject) {
                             dispatch("method:add", data);
-                            formOption.lockInput(obj);
+                            formOption(appData).lockInput(obj);
                             resolve(data);
                         }
                     ).then(
                         function (data) {
                             request(appData).fakeRender(data);
                             request(appData).fakeUpdate();
-                            formOption.unlockInput(obj);
-                            formOption.clearInput(obj);
+                            formOption(appData).unlockInput(obj);
+                            formOption(appData).clearInput(obj);
                         }
                     )
                 } 
@@ -439,28 +441,6 @@ const todo = (function () {
         }
     }
 
-    // function requestSwitchTab(tabBtn) {
-    //     let idTab = 0;
-    //     if (typeof tabBtn == "object") {
-    //         switch (tabBtn.getAttribute("todos-filter-option")) {
-    //             case "all":
-    //                 idTab = 2;
-    //                 break;
-    //             case "completed":
-    //                 idTab = 1;
-    //                 break;
-    //             case "active":default:
-    //                 idTab = 0;
-    //                 break;
-    //         }
-    //     } else {
-    //         idTab = tabBtn;
-    //     }
-    //     jumpToTab(idTab);
-    //     todoViewMode = idTab;
-    //     swiperMap.switchMode.slideTo(idTab);
-    // }
-
     function switchTabButton(appData,option) {
         const {swiperMap, objNode} = appData;
         objNode.querySelectorAll('.todos__filter-item').forEach(el=>el.classList.remove("todos__filter-item--selected"));
@@ -481,9 +461,11 @@ const todo = (function () {
     }
 
     function jumpToTab(appData,option) {
-        
+        const { attach, connect, render, initStore } = appData;
+        // const store = appData.store.data;
         const {renderActive, renderAll, renderDone} = renderOption();
-        const connector = connect((state)=>state.todoList);
+        initStore();
+        const connector = connect(state=>state.todoList);
         switch (option) {
             case 2: 
                 attach (appData.view.all.inner, connector(renderAll));
@@ -513,8 +495,8 @@ const todo = (function () {
             const obj = e.target;
             if (obj.matches("button.todos__filter-item")) {
                 request(appData).switchTab(obj,true);
-            } else if (obj.matches('button[todos-form-command="clear"]')) {
-                formOption(appData).clearInput();
+            } else if (obj.matches('button[todos-form-command="clear"], button[todos-form-command="clear"] *')) {
+                formOption(appData).reset();
             }
         })
         // keypress
@@ -545,9 +527,21 @@ const todo = (function () {
         })
     }
 
+    function pushData(appData = {}, srcData) {
+        if (!srcData) {
+            appData.store = {
+                src: "./",
+                data: {
+                    todoList: [],
+                }
+            }
+        } else {
+            appData.store = Object.assign({src: "./"}, {data: srcData});
+        }
+    }
     
     // test
-    return function (node, {defaultMode} = {}) {
+    return function (node, {defaultMode, srcData} = {}) {
         const appData = {
             // app id
             id: `todos-app-` + window.crypto.randomUUID(),
@@ -563,11 +557,14 @@ const todo = (function () {
             view: {},
             formControls: {},
         }
-
+        const reduxMethod = initStore(appData);
+        Object.assign(appData, reduxMethod);
         if (!node) {
-            throw new Error ("Cannot identify object")
+            throw new Error ("Cannot identify object");
         } else {
             
+            pushData(appData, srcData);
+
             clearNode(appData);
             identify(appData);
             includeSwiper(appData);
@@ -595,7 +592,7 @@ const todo = (function () {
             runEvent(appData);
 
             return {
-                appData
+                appid: appData.id,
             }
         }
         

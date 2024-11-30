@@ -27,20 +27,34 @@
     <div id="td123"></div>
     <div id="app"></div>
     <script type="module" >
+
+        const sampleObject = {
+            todoList: [
+                {
+                    id: "de4vvvffd-33ecddd-eeef-tee",
+                    name: "Order a hamburger",
+                    status: "done"
+                },
+            ]
+        }
+
         import todo from "./../app/src/todos.js";
         const $ = document.querySelector.bind(document);
         const td123 = new todo($('#td123'));
-        const APP = new todo($('#app'));
-        setInterval(
-            function() {
-                console.log('\nUPDATE: ');
-                console.log(td123);
-                console.log(APP);
-            },
-            5000
-        )
-        console.log(td123);
-        console.log(APP);
+        const APP = new todo($('#app'), {
+            srcData: sampleObject,
+            
+        });
+        // setInterval(
+        //     function() {
+        //         console.log('\nUPDATE: ');
+        //         console.log(td123);
+        //         console.log(APP);
+        //     },
+        //     5000
+        // )
+        // console.log(td123);
+        // console.log(APP);
     </script>
 </body>
 </html>
