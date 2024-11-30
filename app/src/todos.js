@@ -686,6 +686,17 @@ const todo = (function () {
                 } else {
                     throw new Error ("You are an idiot, hahahahahahahha");
                 }
+            } else if (obj.matches('button[todos-item-command="edit"], button[todos-item-command="edit"] *')) {
+                // check var moment
+                const IT = findParent(obj, "todos__item");//todoITem
+                if (IT) {
+                    // check var (pt.2)
+                    if (todo(IT).item.status=="active") {
+                        request(appData).editItem(todo(IT).item.input);
+                    }
+                } else {
+                    throw new Error ("You are an idiot, hahahahahahahha");
+                }
             } else if (obj.matches(`input[todos-input-for="${id}"]`)) {
                 interact(appData).blurAll()
             }
