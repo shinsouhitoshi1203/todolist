@@ -461,10 +461,10 @@ const todo = (function () {
     }
 
     function jumpToTab(appData,option) {
-        const { attach, connect, render, initStore } = appData;
+        const { attach, connect, render } = appData;
         // const store = appData.store.data;
         const {renderActive, renderAll, renderDone} = renderOption();
-        initStore();
+        
         const connector = connect(state=>state.todoList);
         switch (option) {
             case 2: 
@@ -559,11 +559,13 @@ const todo = (function () {
         }
         const reduxMethod = initStore(appData);
         Object.assign(appData, reduxMethod);
+        
         if (!node) {
             throw new Error ("Cannot identify object");
         } else {
             
             pushData(appData, srcData);
+            appData.initStore();
 
             clearNode(appData);
             identify(appData);
