@@ -1,8 +1,8 @@
 // import swiper from 'swiper';
 // import 'swiper/css';
 import Swiper from 'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.mjs';
-import { attach, connect, render, dispatch } from './../core/core.js';
-
+// import { attach, connect, render, dispatch } from './../core/core.js';
+import { initStore } from '../core/core.js';
 const todo = (function () {
     const $ = document.querySelector.bind(document);
     const $$ = document.querySelectorAll.bind(document);
@@ -10,7 +10,7 @@ const todo = (function () {
     const TXT = {
         empty: "<div todos-message='nothing'><p style='text-align: center; font-size: 35px; font-weight: 600; color: #bbbbbb'>¯\\_(ツ)_/¯</p><br><p style='text-align: center; color: #bbbbbb'>There is no todo right now. Wanna add one?</p></div>",
     }
-    let id;
+    /* let id;
     let todoViewMode = 0;
     // 0: active, 1: completed, 2: all;
     let objNode;
@@ -21,13 +21,13 @@ const todo = (function () {
     // dom objects
     let view;
     let formControls;
-
+ */
 
     function HTML([f, ...subStr],...$$) {
         return subStr.reduce((a,s,i)=>a.concat($$[i], s),[f]).filter(e=>((e && e!==true)||e===0)).join("");
     }
-    function clearNode() {
-        
+    function clearNode(appData) {
+        const {id, objNode} = appData;
         objNode.classList.add("app-todo", "todos");
         let header = HTML`<div class="todos__form">
                 <div class="todos__input">
@@ -121,28 +121,29 @@ const todo = (function () {
         ${renderItem({itemType: "active", itemName: "go to cgv cinema d.10"})}
         ${renderItem({itemType: "active", itemName: "Lorem ipsum"})}
     </div> */}
-    function identify() { 
-        objNode.setAttribute("todos-id", id);
-        view = {
-            container: objNode.querySelector(".todos__view"),
+    function identify(appData = {}) { 
+        
+        appData.objNode.setAttribute("todos-id", appData.id);
+        appData.view = {
+            container: appData.objNode.querySelector(".todos__view"),
             active: {
-                container: objNode.querySelector(`.todos__view-item[todos-view-item="active"]`),
-                inner: objNode.querySelector(`div.swiper[todos-slide-view="active"] .todos__list`),
+                container: appData.objNode.querySelector(`.todos__view-item[todos-view-item="active"]`),
+                inner: appData.objNode.querySelector(`div.swiper[todos-slide-view="active"] .todos__list`),
             }, 
             all: {
-                container: objNode.querySelector(`.todos__view-item[todos-view-item="all"]`),
-                inner: objNode.querySelector(`div.swiper[todos-slide-view="all"] .todos__list`),
+                container: appData.objNode.querySelector(`.todos__view-item[todos-view-item="all"]`),
+                inner: appData.objNode.querySelector(`div.swiper[todos-slide-view="all"] .todos__list`),
             }, 
             done: {
-                container: objNode.querySelector(`.todos__view-item[todos-view-item="done"]`),
-                inner: objNode.querySelector(`div.swiper[todos-slide-view="done"] .todos__list`),
+                container: appData.objNode.querySelector(`.todos__view-item[todos-view-item="done"]`),
+                inner: appData.objNode.querySelector(`div.swiper[todos-slide-view="done"] .todos__list`),
             }, 
         }
-        formControls = {
+        appData.formControls = {
             form: {
-                input: objNode.querySelector(`input[todos-input-for="${id}"]`),
+                input: appData.objNode.querySelector(`input[todos-input-for="${appData.id}"]`),
 
-                clear: objNode.querySelector('button[todos-form-command="clear"]')
+                clear: appData.objNode.querySelector('button[todos-form-command="clear"]')
 
             },
         }
@@ -185,8 +186,8 @@ const todo = (function () {
                 break;
         }
     }
-    function includeSwiper() {
-        swiperMap.switchMode = new Swiper (`div[todos-id="${id}"] .swiper[todos-sliding-container="switch-mode"]`, {
+    function includeSwiper(appData) {
+        appData.swiperMap.switchMode = new Swiper (`div[todos-id="${appData.id}"] .swiper[todos-sliding-container="switch-mode"]`, {
             slidesPerView: 1,
             direction: 'vertical',
             loop: true,
@@ -211,7 +212,7 @@ const todo = (function () {
             ["slideViewAll","all"]
         ].forEach(
             ([ulSwiperName, ulSwiperTarget])=>{
-                swiperMap[ulSwiperName] = new Swiper (`div[todos-id="${id}"] .swiper[todos-slide-view="${ulSwiperTarget}"]`, {
+                appData.swiperMap[ulSwiperName] = new Swiper (`div[todos-id="${appData.id}"] .swiper[todos-slide-view="${ulSwiperTarget}"]`, {
                     direction: 'vertical',
                     speed: 500,
                     slidesPerView: 'auto',
@@ -326,135 +327,122 @@ const todo = (function () {
     }
 
     // input from form 
-    const formOption = {
-        clearInput(obj = formControls.form.input) {
-            obj.value = "";
-            obj.focus();
-        },
-        lockInput (obj = formControls.form.input) {
-            obj.disabled = true;
-        },
-        unlockInput (obj = formControls.form.input) {
-            obj.disabled = false;
-        },
-        setClearButton(value = false) {
-            value = (value?"remove":"add");
-            formControls.form.clear.classList[value]("app-todo__disable-obj");
-        },
-        reset() {
-            this.clearInput();
-            this.unlockInput();
-            this.setClearButton();
+    const formOption = function (appData) {
+        const {formControls} = appData;
+        return {
+            clearInput(obj = formControls.form.input) {
+                // console.log(formControls);
+                obj.value = "";
+                obj.focus();
+            },
+            lockInput (obj = formControls.form.input) {
+                obj.disabled = true;
+            },
+            unlockInput (obj = formControls.form.input) {
+                obj.disabled = false;
+            },
+            setClearButton(value = false) {
+                value = (value?"remove":"add");
+                formControls.form.clear.classList[value]("app-todo__disable-obj");
+            },
+            reset() {
+                this.clearInput();
+                this.unlockInput();
+                this.setClearButton();
+            }
         }
     }
 
     // request stuff
-    const request = {
-        switchTab(tabBtn, fromButton=false) {
-            
-            let idTab = 0;
-            if (typeof tabBtn == "object") {
-                switch (tabBtn.getAttribute("todos-filter-option")) {
-                    case "all":
-                        idTab = 2;
-                        break;
-                    case "completed":
-                        idTab = 1;
-                        break;
-                    case "active":default:
-                        idTab = 0;
-                        break;
-                }
-            } else {
-                idTab = tabBtn;
-            }
-            if ((idTab===todoViewMode) && (fromButton)) return true;
-            jumpToTab(idTab);
-            todoViewMode = idTab;
-            swiperMap.switchMode.slideTo(idTab);
-        },
-        // add an Item by DOM node
-        addItem(obj) {
-            function exportData(itemName) {
-                const id = window.crypto.randomUUID();
-                return {
-                    id,
-                    name: itemName,
-                    status: "active"
-                }
-            }
-            const itemName = obj.value;
-            if (itemName!="") {
-                const data = exportData(itemName);
-                new Promise (
-                    function (resolve, reject) {
-                        dispatch("method:add", data);
-                        formOption.lockInput(obj);
-                        resolve(data);
+    const request = function (appData) {
+        const { dispatch } = appData;
+        const { todoViewMode, swiperMap, view } = appData;
+        return {
+            switchTab(tabBtn = todoViewMode, fromButton=false) {
+                const {todoViewMode} = appData;
+                let idTab = 0;
+                if (typeof tabBtn == "object") {
+                    switch (tabBtn.getAttribute("todos-filter-option")) {
+                        case "all":
+                            idTab = 2;
+                            break;
+                        case "completed":
+                            idTab = 1;
+                            break;
+                        case "active":default:
+                            idTab = 0;
+                            break;
                     }
-                ).then(
-                    function (data) {
-                        request.fakeRender(data);
-                        request.fakeUpdate();
-                        formOption.unlockInput(obj);
-                        formOption.clearInput(obj);
-                    }
-                )
-            } 
-        },
-        fakeRender(data) {
-            if (todoViewMode == 0 || todoViewMode == 2 ) {
-                const sw = swiperMap[`slideView${(todoViewMode==0)?"Current":"All"}`];
-                const inner = view[`${(todoViewMode==0)?"active":"all"}`].inner;
-                if (inner.querySelector("div[todos-message='nothing']")) {
-                    inner.innerHTML = "";
-                    sw.update();
+                } else {
+                    idTab = tabBtn;
                 }
-                sw.appendSlide(
-                    renderItem (
-                        {
-                            itemType: data.status,
-                            itemName: data.name, 
-                            itemID: data.id
+                if ((idTab===todoViewMode) && (fromButton)) return true;
+                jumpToTab(appData, idTab);
+                appData.todoViewMode = idTab;
+                appData.swiperMap.switchMode.slideTo(idTab);
+            },
+            // add an Item by DOM node
+            addItem(obj) {
+                function exportData(itemName) {
+                    const id = window.crypto.randomUUID();
+                    return {
+                        id,
+                        name: itemName,
+                        status: "active"
+                    }
+                }
+                const itemName = obj.value;
+                if (itemName!="") {
+                    const data = exportData(itemName);
+                    new Promise (
+                        function (resolve, reject) {
+                            dispatch("method:add", data);
+                            formOption(appData).lockInput(obj);
+                            resolve(data);
+                        }
+                    ).then(
+                        function (data) {
+                            request(appData).fakeRender(data);
+                            request(appData).fakeUpdate();
+                            formOption(appData).unlockInput(obj);
+                            formOption(appData).clearInput(obj);
                         }
                     )
-                )
-            }
-        },
-        fakeUpdate(typeofTodo) {
-            if ([0,2].includes(todoViewMode)) {
-                if (todoViewMode==0) {
-                    updateListLength(view.active.container,"active")();
-                } else {
-                    updateListLength(view.all.container,"all")();
+                } 
+            },
+            fakeRender(data) {
+                if (todoViewMode == 0 || todoViewMode == 2 ) {
+                    const sw = swiperMap[`slideView${(todoViewMode==0)?"Current":"All"}`];
+                    const inner = view[`${(todoViewMode==0)?"active":"all"}`].inner;
+                    if (inner.querySelector("div[todos-message='nothing']")) {
+                        inner.innerHTML = "";
+                        sw.update();
+                    }
+                    sw.appendSlide(
+                        renderItem (
+                            {
+                                itemType: data.status,
+                                itemName: data.name, 
+                                itemID: data.id
+                            }
+                        )
+                    )
+                }
+            },
+            fakeUpdate(typeofTodo) {
+                if ([0,2].includes(todoViewMode)) {
+                    if (todoViewMode==0) {
+                        updateListLength(view.active.container,"active")();
+                    } else {
+                        updateListLength(view.all.container,"all")();
+                    }
                 }
             }
         }
     }
 
-    // function requestSwitchTab(tabBtn) {
-    //     let idTab = 0;
-    //     if (typeof tabBtn == "object") {
-    //         switch (tabBtn.getAttribute("todos-filter-option")) {
-    //             case "all":
-    //                 idTab = 2;
-    //                 break;
-    //             case "completed":
-    //                 idTab = 1;
-    //                 break;
-    //             case "active":default:
-    //                 idTab = 0;
-    //                 break;
-    //         }
-    //     } else {
-    //         idTab = tabBtn;
-    //     }
-    //     jumpToTab(idTab);
-    //     todoViewMode = idTab;
-    //     swiperMap.switchMode.slideTo(idTab);
-    // }
-
-    function switchTabButton(option) {
+    function switchTabButton(appData,option) {
+        const {swiperMap, objNode} = appData;
         objNode.querySelectorAll('.todos__filter-item').forEach(el=>el.classList.remove("todos__filter-item--selected"));
         switch (option) {
             case "all": 
@@ -472,39 +460,43 @@ const todo = (function () {
         }
     }
 
-    function jumpToTab(option) {
+    function jumpToTab(appData,option) {
+        const { attach, connect, render } = appData;
+        // const store = appData.store.data;
         const {renderActive, renderAll, renderDone} = renderOption();
-        const connector = connect((state)=>state.todoList);
+        
+        const connector = connect(state=>state.todoList);
         switch (option) {
             case 2: 
-                attach (view.all.inner, connector(renderAll));
-                render (view.all.inner, updateListLength(view.all.container, "") );
-                switchTabButton("all");
-                swiperMap.slideViewAll.update();
+                attach (appData.view.all.inner, connector(renderAll));
+                render (appData.view.all.inner, updateListLength(appData.view.all.container, "") );
+                switchTabButton(appData, "all");
+                appData.swiperMap.slideViewAll.update();
                 break;
             case 1: 
-                attach (view.done.inner, connector(renderDone));
-                render (view.done.inner, updateListLength(view.done.container, "completed") );
-                switchTabButton("done");
-                swiperMap.slideViewCompleted.update();
+                attach (appData.view.done.inner, connector(renderDone));
+                render (appData.view.done.inner, updateListLength(appData.view.done.container, "completed") );
+                switchTabButton(appData, "done");
+                appData.swiperMap.slideViewCompleted.update();
                 break;
             case 0: default: 
-                attach (view.active.inner, connector(renderActive));
-                render (view.active.inner, updateListLength(view.active.container) );
-                switchTabButton("active");
-                swiperMap.slideViewCurrent.update();
+                attach (appData.view.active.inner, connector(renderActive));
+                render (appData.view.active.inner, updateListLength(appData.view.active.container) );
+                switchTabButton(appData, "active");
+                appData.swiperMap.slideViewCurrent.update();
                 break;
         }
     }
 
-    function runEvent() {
+    function runEvent(appData = {}) {
+        const {objNode,id} = appData;
         // click
         objNode.addEventListener("click", function (e) {
             const obj = e.target;
             if (obj.matches("button.todos__filter-item")) {
-                request.switchTab(obj,true);
-            } else if (obj.matches('button[todos-form-command="clear"]')) {
-                formOption.clearInput();
+                request(appData).switchTab(obj,true);
+            } else if (obj.matches('button[todos-form-command="clear"], button[todos-form-command="clear"] *')) {
+                formOption(appData).reset();
             }
         })
         // keypress
@@ -515,9 +507,9 @@ const todo = (function () {
                 // add new object
                 if (key!="Enter") {
                     if (obj.value!="") {
-                        formOption.setClearButton(true);
+                        formOption(appData).setClearButton(true);
                     } else {
-                        formOption.setClearButton(false);
+                        formOption(appData).setClearButton(false);
                     }
                 }
             }
@@ -529,62 +521,80 @@ const todo = (function () {
             if (obj.matches(`input[todos-input-for="${id}"]`)) {
                 // add new object
                 if (key=="Enter") {
-                    request.addItem(obj);
+                    request(appData).addItem(obj);
                 }
             }
         })
     }
 
-    return function (node, {defaultMode} = {}) {
-        if (!node) {
-            throw new Error ("Cannot identify object")
+    function pushData(appData = {}, srcData) {
+        if (!srcData) {
+            appData.store = {
+                src: "./",
+                data: {
+                    todoList: [],
+                }
+            }
         } else {
-            id = `todos-app-${node.id}` || window.crypto.randomUUID();
-            objNode = node;
-            clearNode();
-            identify();
-            includeSwiper();
+            appData.store = Object.assign({src: "./"}, {data: srcData});
+        }
+    }
+    
+    // test
+    return function (node, {defaultMode, srcData} = {}) {
+        const appData = {
+            // app id
+            id: `todos-app-` + window.crypto.randomUUID(),
+            // app node
+            objNode: node,
+            // app view mode
+            todoViewMode:0, // 0: active, 1: completed, 2: all,
+            // swiperMode selector
+            swiperMap : {
+                switchMode: {},
+            },
+            // dom objects
+            view: {},
+            formControls: {},
+        }
+        const reduxMethod = initStore(appData);
+        Object.assign(appData, reduxMethod);
+        
+        if (!node) {
+            throw new Error ("Cannot identify object");
+        } else {
+            
+            pushData(appData, srcData);
+            appData.initStore();
+
+            clearNode(appData);
+            identify(appData);
+            includeSwiper(appData);
             
             /// connect to store
             if (!defaultMode) {
-                todoViewMode = 0; 
+                appData.todoViewMode = 0; 
             } else {
                 switch (defaultMode) {
                     case "all":case 2:
-                        todoViewMode = 2; 
+                        appData.todoViewMode = 2; 
                         break;
                     case "done":case "completed":case 1:
-                        todoViewMode = 1; 
+                        appData.todoViewMode = 1; 
                         break;
                     case "active": default:
-                        todoViewMode = 0;
+                        appData.todoViewMode = 0;
                         break;
                 }
             }
 
-            formOption.reset();
-            request.switchTab(todoViewMode);
+            formOption(appData).reset();
+            request(appData).switchTab();
 
-            runEvent();
+            runEvent(appData);
 
             return {
-                addQuick(itemName) {
-                    function renderRequest(itemName) {
-                        const itemID = window.crypto.randomUUID();
-                        return {
-                            status: "active",
-                            id: itemID,
-                            status: itemName,
-                        }
-                    }
-                    
-                    const itemObj = renderRequest(itemName);
-                    dispatch("method:add", itemObj);
-                    //start();
-                },
-                switchNext() {
-                    swiperMap.switchMode.slideNext();
-                }
+                appid: appData.id,
             }
         }
         

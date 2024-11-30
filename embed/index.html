@@ -15,11 +15,7 @@
     <link rel="stylesheet" href="./../app/src/todo.css">
     <script type="module" src="./../app/src/todos.js"></script>
 
-    <script type="module" >
-        import todo from "./../app/src/todos.js";
-        const $ = document.querySelector.bind(document);
-        const td123 = new todo($('#td123'));
-    </script>
+    
 </head>
 <style>
     html {font-size: 62.5%;}
@@ -29,6 +25,27 @@
 </style>
 <body>
     <div id="td123"></div>
-    
+    <div id="app"></div>
+    <script type="module" >
+
+        const sampleObject = {
+            todoList: [
+                {
+                    id: "de4vvvffd-33ecddd-eeef-tee",
+                    name: "Order a hamburger",
+                    status: "done"
+                },
+            ]
+        }
+
+        import todo from "./../app/src/todos.js";
+        const $ = document.querySelector.bind(document);
+        const td123 = new todo($('#td123'));
+        const APP = new todo($('#app'), {
+            srcData: sampleObject,
+            
+        });
+        
+    </script>
 </body>
 </html>
