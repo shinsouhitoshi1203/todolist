@@ -184,6 +184,7 @@ a {
   border-radius: 6px;
   margin-right: 2px;
   transition: border-color 0.3s, background 0.3s;
+  flex-shrink: 0;
 }
 .todos__item-check:hover {
   border-color: var(--main-trans);
@@ -278,6 +279,9 @@ a {
 .todos__item[todos-item-mode=normal] button[todos-item-command=delete] {
   display: block;
 }
+.todos__item[todos-item-mode=normal] button[todos-item-command=cancel] {
+  display: none;
+}
 .todos__item[todos-item-mode=normal] button[todos-item-command=edit] {
   display: none;
 }
@@ -309,6 +313,9 @@ a {
 .todos__item[todos-item-status=done] button[todos-item-command=edit] {
   display: none;
 }
+.todos__item[todos-item-status=done] button[todos-item-command=cancel] {
+  display: none;
+}
 .todos__item[todos-item-mode=edit] .todos__item-edit {
   display: block;
 }
@@ -316,6 +323,9 @@ a {
   display: none;
 }
 .todos__item[todos-item-mode=edit] button[todos-item-command=edit] {
+  display: block;
+}
+.todos__item[todos-item-mode=edit] button[todos-item-command=cancel] {
   display: block;
 }
 

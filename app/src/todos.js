@@ -10,18 +10,75 @@ const todo = (function () {
     const TXT = {
         empty: "<div todos-message='nothing'><p style='text-align: center; font-size: 35px; font-weight: 600; color: #bbbbbb'>¯\\_(ツ)_/¯</p><br><p style='text-align: center; color: #bbbbbb'>There is no todo right now. Wanna add one?</p></div>",
     }
-    /* let id;
-    let todoViewMode = 0;
-    // 0: active, 1: completed, 2: all;
-    let objNode;
-    // swiperMode selector
-    const swiperMap = {
-        switchMode: {},
+
+    const todo = function (node = {}) { // todos__item
+        if (!node) throw new Error ("You have selected wrong node, dummy");
+        return {
+            item: {
+                //////////todos main//////////
+                get name() {
+                    return node.querySelector(".todos__item-name span")?.innerText ?? "";
+                },
+                set name(itemName) {
+                    node.querySelector(".todos__item-name span").setAttribute("title", itemName);
+                    node.querySelector(".todos__item-name span").innerText = itemName;
+                },
+                get id() {
+                    return node.getAttribute("todos-item-id");
+                },
+                get input() {
+                    return node.querySelector(".todos__item-name input");
+                },
+                //////////todos attributes//////////
+                get status () {
+                    const value = node.getAttribute("todos-item-status");
+                    if (!value) {
+                        throw new Error ("this node doesnt have this prop");
+                    } else {
+                        return value;
+                    }
+                },
+                get mode() {
+                    const value = node.getAttribute("todos-item-mode");
+                    if (!value) {
+                        throw new Error ("this node doesnt have this prop");
+                    } else {
+                        return value;
+                    }
+                },
+                set status(newValue) {
+                    const value = this.status;
+                    if (!value) {
+                        throw new Error ("this node doesnt have this prop");
+                    } else {
+                        node.setAttribute("todos-item-status", newValue);
+                    }
+                },
+                set mode(newValue) {
+                    const value = this.mode;
+                    if (!value) {
+                        throw new Error ("this node doesnt have this prop");
+                    } else {
+                        console.log(node);
+                        node.setAttribute("todos-item-mode", newValue);
+                    }
+                }
+            }
+        }
+    };
+
+    function findParent(node, target, attrHTML = "") {
+        // batman doesnt like this function
+        let count = 0;
+        target+=attrHTML;
+        target = (target[0]==".")?target:"."+target;
+        while (!node.matches(target)) {
+            node = node.parentNode;
+            count++;
+            if (count == 200) return false;
+        }
+        return node;
     }
-    // dom objects
-    let view;
-    let formControls;
- */
 
     function HTML([f, ...subStr],...$$) {
         return subStr.reduce((a,s,i)=>a.concat($$[i], s),[f]).filter(e=>((e && e!==true)||e===0)).join("");
@@ -151,13 +208,16 @@ const todo = (function () {
     function renderItem ({itemType, itemName, itemID}) {
         switch (itemType) {
             case 'done':
-                return HTML`<div class="swiper-slide" todos-item-id="${itemID}">
-                    <div class="todos__item" todos-item-status="done" todos-item-mode="normal">
+                return HTML`<div class="swiper-slide" >
+                    <div class="todos__item" todos-item-id="${itemID}" todos-item-status="done" todos-item-mode="normal">
                         <button class="todos__item-check" title="mark as done"></button>
-                        <p class="todos__item-name" title="${itemName}">
+                        <p class="todos__item-name" >
                             <input type="text" class="todos__item-edit">
-                            <span>${itemName}</span>
+                            <span title="${itemName}">${itemName}</span>
                         </p>
+                        <button class="todos__button-plain todos__button-plain--posEnd" title="finish editing this to-do" todos-item-command="cancel">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
                         <button class="todos__button-plain todos__button-plain--posEnd" title="delete this to-do" todos-item-command="delete">
                             <i class="fa-solid fa-xmark"></i>
                         </button>
@@ -168,13 +228,16 @@ const todo = (function () {
                 </div>`;
                 break;
             case 'active':default:
-                return HTML`<div class="swiper-slide" todos-item-id="${itemID}">
-                    <div class="todos__item" todos-item-status="active" todos-item-mode="normal">
+                return HTML`<div class="swiper-slide" >
+                    <div class="todos__item" todos-item-id="${itemID}" todos-item-status="active" todos-item-mode="normal">
                         <button class="todos__item-check" title="mark as done"></button>
-                        <p class="todos__item-name" title="${itemName}">
+                        <p class="todos__item-name" >
                             <input type="text" class="todos__item-edit">
-                            <span>${itemName}</span>
+                            <span title="${itemName}">${itemName}</span>
                         </p>
+                        <button class="todos__button-plain todos__button-plain--posEnd" title="finish editing this to-do" todos-item-command="cancel">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
                         <button class="todos__button-plain todos__button-plain--posEnd" title="delete this to-do" todos-item-command="delete">
                             <i class="fa-solid fa-xmark"></i>
                         </button>
@@ -326,8 +389,8 @@ const todo = (function () {
         }
     }
 
-    // input from form 
-    const formOption = function (appData) {
+    // input from form header ONLY
+    const formOption = function (appData = {}) {
         const {formControls} = appData;
         return {
             clearInput(obj = formControls.form.input) {
@@ -353,7 +416,7 @@ const todo = (function () {
         }
     }
 
-    // request stuff
+    // request stuff (only for ITEM interaction)
     const request = function (appData) {
         const { dispatch } = appData;
         const { todoViewMode, swiperMap, view } = appData;
@@ -410,6 +473,26 @@ const todo = (function () {
                     )
                 } 
             },
+            editItem(obj) {
+                const item = interact(appData).item(obj);
+                const itemID = todo(item).item.id;
+                const itemName = obj.value;
+                if (itemName!="") {
+                    new Promise (
+                        function (resolve, reject) {
+                            dispatch("method:modify", itemID, itemName);
+                            interact(appData).input.lock(obj);
+                            resolve({itemID, itemName});
+                        }
+                    ).then(
+                        function ({itemID, itemName}) {
+                            request(appData).fakeRename(itemID, itemName);
+                            formOption(appData).unlockInput(obj);
+                            formOption(appData).clearInput(obj);
+                        }
+                    )
+                } 
+            },
             fakeRender(data) {
                 if (todoViewMode == 0 || todoViewMode == 2 ) {
                     const sw = swiperMap[`slideView${(todoViewMode==0)?"Current":"All"}`];
@@ -437,6 +520,88 @@ const todo = (function () {
                         updateListLength(view.all.container,"all")();
                     }
                 }
+            },
+            fakeRename(itemID, itemName) {
+                if (todoViewMode == 0 || todoViewMode == 2 ) {
+                    const sw = swiperMap[`slideView${(todoViewMode==0)?"Current":"All"}`];
+                    const inner = view[`${(todoViewMode==0)?"active":"all"}`].inner;
+                    const todoItem = interact(appData).list(inner).find(itemID);
+                    if (!todoItem) {
+                        sw.appendSlide(
+                            renderItem (
+                                {
+                                    itemType: "active",
+                                    itemName: itemName, 
+                                    itemID: itemID
+                                }
+                            )
+                        )
+                    } else {
+                        console.log(todoItem)
+                        todo(todoItem).item.mode = "normal";
+                        todo(todoItem).item.name = itemName;
+                    }
+                }
+            }
+        }
+    }
+    const interact = function (appData) {
+        return {
+            input: {
+                txtBox(obj) {
+                    return {
+                        renameValue(value = "") {
+                            obj.value = value;
+                            obj.focus();
+                            obj.disabled = false;
+                        }
+                    }
+                },
+                parent(obj) {
+                },
+                lock(obj) {
+                    formOption(appData).lockInput(obj);
+                },
+                unlock(obj) {
+                    formOption(appData).unlockInput(obj);
+                }
+            },
+            item(obj) {
+                const node = findParent(obj, ".todos__item");
+                if (!node) {
+                    throw new Error ("unable to find the todo, bruh");
+                } else {
+                    return node;
+                }
+            },
+            blurAll(obj) {
+                appData.objNode.querySelectorAll(".todos__item").forEach(it=>{
+                    interact(appData).closeEdit(it)
+                })
+            },
+            list(inner) {
+                return {
+                    find(itemID) {
+                        const node = inner.querySelector(`.todos__item[todos-item-id="${itemID}"]`);
+                        if (!node) {
+                            return false;
+                        } else {
+                            return node;
+                        }
+                    }
+                }
+            },
+            openEdit(todoItem) {
+                const inp = todo(todoItem).item.input;
+                const currentName = todo(todoItem).item.name;
+                todo(todoItem).item.mode = "edit";
+                this.input.txtBox(inp).renameValue (currentName);
+                
+                // events
+                
+            },
+            closeEdit(todoItem) {
+                todo(todoItem).item.mode = "normal";
             }
         }
     }
@@ -493,10 +658,36 @@ const todo = (function () {
         // click
         objNode.addEventListener("click", function (e) {
             const obj = e.target;
+            console.log(obj)
             if (obj.matches("button.todos__filter-item")) {
                 request(appData).switchTab(obj,true);
             } else if (obj.matches('button[todos-form-command="clear"], button[todos-form-command="clear"] *')) {
                 formOption(appData).reset();
+            } else if (obj.matches('.todos__item-name span')) {
+                // check var moment
+                const IT = findParent(obj, "todos__item");//todoITem
+                if (IT) {
+                    // check var (pt.2)
+                    if (todo(IT).item.status=="active") {
+                        interact(appData).blurAll()
+                        interact(appData).openEdit(IT)
+                    }
+                } else {
+                    throw new Error ("You are an idiot, hahahahahahahha");
+                }
+            } else if (obj.matches('button[todos-item-command="cancel"], button[todos-item-command="cancel"] *')) {
+                // check var moment
+                const IT = findParent(obj, "todos__item");//todoITem
+                if (IT) {
+                    // check var (pt.2)
+                    if (todo(IT).item.status=="active") {
+                        interact(appData).closeEdit(IT)
+                    }
+                } else {
+                    throw new Error ("You are an idiot, hahahahahahahha");
+                }
+            } else if (obj.matches(`input[todos-input-for="${id}"]`)) {
+                interact(appData).blurAll()
             }
         })
         // keypress
@@ -512,7 +703,7 @@ const todo = (function () {
                         formOption(appData).setClearButton(false);
                     }
                 }
-            }
+            } 
         })
         // keydown
         objNode.addEventListener("keydown", function (e) {
@@ -522,6 +713,11 @@ const todo = (function () {
                 // add new object
                 if (key=="Enter") {
                     request(appData).addItem(obj);
+                }
+            } else if (obj.matches(`input.todos__item-edit`)) {
+                // edit new object
+                if (key=="Enter") {
+                    request(appData).editItem(obj);
                 }
             }
         })

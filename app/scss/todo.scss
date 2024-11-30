@@ -127,7 +127,8 @@
             width: 20px; height: 20px; border: 2px solid var(--uncheck); position: relative;
             @extend %center; border-radius: 6px;  margin-right: 2px;
             transition: border-color .3s, background .3s;
-
+            flex-shrink: 0;
+            
             &:hover {
                 border-color: var(--main-trans);
                 & + p>span::after {transform-origin: left center; transform: scaleX(1);}
@@ -193,6 +194,9 @@
             &[todos-item-mode=normal] button[todos-item-command=delete] {
                 display: block;
             }
+            &[todos-item-mode=normal] button[todos-item-command=cancel] {
+                display: none;
+            }
             &[todos-item-mode=normal] button[todos-item-command=edit] {
                 display: none;
             }
@@ -230,6 +234,9 @@
             &[todos-item-status=done] button[todos-item-command=edit] {
                 display: none;
             }
+            &[todos-item-status=done] button[todos-item-command=cancel] {
+                display: none;
+            }
 
         }
 
@@ -243,6 +250,9 @@
                 display: none;
             }
             &[todos-item-mode=edit] button[todos-item-command=edit] {
+                display: block;
+            }
+            &[todos-item-mode=edit] button[todos-item-command=cancel] {
                 display: block;
             }
         }
