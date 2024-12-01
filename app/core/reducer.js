@@ -32,8 +32,13 @@ export default function todoReducer (state, action, ...args) {
             }
             
             return state;
-
-            
+            break;
+        case "method:delete":
+            {
+                const i = pos(itemID);
+                state.todoList.splice(i,1)
+            }
+            return state;
             break;
         default:
             return state;

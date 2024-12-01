@@ -492,8 +492,9 @@ const todo = (function () {
                 let requireDelete = true;
                 const itemID = todo(obj).item.id;
                 const itemStatus = todo(obj).item.status;
+                const dataResult = {};
 
-                async function fixStatus(itemID,status = "done") {
+                async function handling(itemID,status = "done") {
                     appData.allowEvent = false;
                     todo(obj).item.status=status;
                     return new Promise(
@@ -504,7 +505,6 @@ const todo = (function () {
 
                         }
                     )
-                    
                 }
                 
                 switch (todoViewMode) {
@@ -531,11 +531,9 @@ const todo = (function () {
                         break;
                 }
 
-                const dataResult = {};
                 (async ()=>{
-                    
                     try {
-                        const data = await fixStatus(itemID,query);
+                        const data = await handling(itemID,query);
                         // console.log(data);
                         appData.allowEvent = true;
                         Object.assign(dataResult, data);
@@ -547,12 +545,33 @@ const todo = (function () {
                         } 
                     }
                 })();
-                
-                
-                //         todo(obj).item.status = "done"
-                
-                
-                // todo(obj).item.status = "done"
+            },
+            async deleteItem(obj) {
+                const itemID = todo(obj).item.id;
+                const dataResult = {};
+
+                async function handling(itemID) {
+                    appData.allowEvent = false;
+                    return new Promise(
+                        function (resolve) {
+                            dispatch("method:delete", itemID);
+                            const data = {itemID}
+                            setTimeout(()=>{resolve(data)}, 200);
+                        }
+                    )
+                }
+                (async ()=>{
+                    try {
+                        const data = await handling(itemID);
+                        // console.log(data);
+                        appData.allowEvent = true;
+                        Object.assign(dataResult, data);
+                    } catch (e) {
+                        console.log(e);
+                    } finally {
+                        this.fakeDelete(dataResult.itemID);
+                    }
+                })();
             },
             fakeRender(data) {
                 if (todoViewMode == 0 || todoViewMode == 2 ) {
@@ -758,7 +777,7 @@ const todo = (function () {
         // click
         objNode.addEventListener("click", function (e) {
             const obj = e.target;
-            console.log(obj)
+            // console.log(obj)
             if (obj.matches("button.todos__filter-item")) {
                 request(appData).switchTab(obj,true);
             } else if (obj.matches('button[todos-form-command="clear"], button[todos-form-command="clear"] *')) {
@@ -809,7 +828,17 @@ const todo = (function () {
                 } else {
                     throw new Error ("You are an idiot, hahahahahahahha");
                 }
-            } 
+            } else if (obj.matches('button[todos-item-command="delete"], button[todos-item-command="delete"] *')) {
+                // check var moment
+                checkVar();
+                const IT = findParent(obj, "todos__item");//todoITem
+                if (IT) {
+                    // check var (pt.2)
+                    request(appData).deleteItem(IT);
+                } else {
+                    throw new Error ("You are an idiot, hahahahahahahha");
+                }
+            }
         })
         // keypress
         objNode.addEventListener("input", function (e) {
