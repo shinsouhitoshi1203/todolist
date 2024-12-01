@@ -87,18 +87,25 @@
 .todos {
     &__button {
         &-plain {
-            color: var(--main-trans);
-            transition: color .3s;
+            width: 10.5px; display: flex;align-items: center;
+            color: var(--main-trans); 
+            svg {
+                fill: var(--main-trans);
+            }
+            transition: color .3s, fill .3s;
             cursor: pointer;
             &--posEnd {padding: 0;}
             &:hover {
-                color: var(--main);
+                color: var(--main); 
+                svg {
+                    fill: var(--main);
+                }
             }
         }
     }
     &__icon {
-        padding-right: 5px;
-        &--folder {margin-left: -3px; padding: 0;}
+        padding-right: 5px;width: 16px;height: 16px;
+        &--folder {margin-left: -3px; padding: 0; width: 25px;height: 25px;}
     }
 }
 
@@ -192,7 +199,7 @@
                 display: none;
             }
             &[todos-item-mode=normal] button[todos-item-command=delete] {
-                display: block;
+                display: flex;
             }
             &[todos-item-mode=normal] button[todos-item-command=cancel] {
                 display: none;
@@ -229,7 +236,7 @@
                 display: none;
             }
             &[todos-item-status=done] button[todos-item-command=delete] {
-                display: block;
+                display: flex;
             }
             &[todos-item-status=done] button[todos-item-command=edit] {
                 display: none;
@@ -250,10 +257,10 @@
                 display: none;
             }
             &[todos-item-mode=edit] button[todos-item-command=edit] {
-                display: block;
+                display: flex;
             }
             &[todos-item-mode=edit] button[todos-item-command=cancel] {
-                display: block;
+                display: flex;
             }
         }
 }

@@ -141,9 +141,15 @@ a {
 }
 
 .todos__button-plain {
+  width: 10.5px;
+  display: flex;
+  align-items: center;
   color: var(--main-trans);
-  transition: color 0.3s;
+  transition: color 0.3s, fill 0.3s;
   cursor: pointer;
+}
+.todos__button-plain svg {
+  fill: var(--main-trans);
 }
 .todos__button-plain--posEnd {
   padding: 0;
@@ -151,12 +157,19 @@ a {
 .todos__button-plain:hover {
   color: var(--main);
 }
+.todos__button-plain:hover svg {
+  fill: var(--main);
+}
 .todos__icon {
   padding-right: 5px;
+  width: 16px;
+  height: 16px;
 }
 .todos__icon--folder {
   margin-left: -3px;
   padding: 0;
+  width: 25px;
+  height: 25px;
 }
 
 .todos .swiper[todos-slide-view=active] {
@@ -277,7 +290,7 @@ a {
   display: none;
 }
 .todos__item[todos-item-mode=normal] button[todos-item-command=delete] {
-  display: block;
+  display: flex;
 }
 .todos__item[todos-item-mode=normal] button[todos-item-command=cancel] {
   display: none;
@@ -308,7 +321,7 @@ a {
   display: none;
 }
 .todos__item[todos-item-status=done] button[todos-item-command=delete] {
-  display: block;
+  display: flex;
 }
 .todos__item[todos-item-status=done] button[todos-item-command=edit] {
   display: none;
@@ -323,10 +336,10 @@ a {
   display: none;
 }
 .todos__item[todos-item-mode=edit] button[todos-item-command=edit] {
-  display: block;
+  display: flex;
 }
 .todos__item[todos-item-mode=edit] button[todos-item-command=cancel] {
-  display: block;
+  display: flex;
 }
 
 /*# sourceMappingURL=todo.css.map */

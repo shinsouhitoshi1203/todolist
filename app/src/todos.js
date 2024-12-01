@@ -1,14 +1,21 @@
 // import swiper from 'swiper';
 // import 'swiper/css';
 import Swiper from 'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.mjs';
-// import { attach, connect, render, dispatch } from './../core/core.js';
 import { initStore } from '../core/core.js';
+
+
 const todo = (function () {
     const $ = document.querySelector.bind(document);
     const $$ = document.querySelectorAll.bind(document);
     // messages
     const TXT = {
         empty: "<div todos-message='nothing'><p style='text-align: center; font-size: 35px; font-weight: 600; color: #bbbbbb'>¯\\_(ツ)_/¯</p><br><p style='text-align: center; color: #bbbbbb'>There is no todo right now. Wanna add one?</p></div>",
+    }
+    const ICON = {
+        folder: `<?xml version="1.0" encoding="UTF-8"?><svg fill="none" viewBox="0 0 25 25" xmlns="http://www.w3.org/2000/svg"><path d="m3.9233 7.8972v9.9782c0 0.5292 0.21025 1.0368 0.58451 1.4111 0.37425 0.3743 0.88185 0.5845 1.4111 0.5845h13.969c0.5293 0 1.0369-0.2102 1.4111-0.5845 0.3743-0.3743 0.5846-0.8819 0.5846-1.4111v-7.9826c0-0.52928-0.2103-1.0369-0.5846-1.4111-0.3742-0.37426-0.8818-0.58451-1.4111-0.58451h-5.9869l-1.9956-1.9956h-5.9869c-0.52927 0-1.0369 0.21025-1.4111 0.5845-0.37426 0.37426-0.58451 0.88186-0.58451 1.4111z" fill="#413F3F" fill-opacity=".4"/></svg>`,
+        pen: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M362.7 19.3L314.3 67.7 444.3 197.7l48.4-48.4c25-25 25-65.5 0-90.5L453.3 19.3c-25-25-65.5-25-90.5 0zm-71 71L58.6 323.5c-10.4 10.4-18 23.3-22.2 37.4L1 481.2C-1.5 489.7 .8 498.8 7 505s15.3 8.5 23.7 6.1l120.3-35.4c14.1-4.2 27-11.8 37.4-22.2L421.7 220.3 291.7 90.3z"/></svg>`,
+        x: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/></svg>`,
+        check: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"/></svg>`
     }
 
     const todo = function (node = {}) { // todos__item
@@ -59,7 +66,6 @@ const todo = (function () {
                     if (!value) {
                         throw new Error ("this node doesnt have this prop");
                     } else {
-                        console.log(node);
                         node.setAttribute("todos-item-mode", newValue);
                     }
                 }
@@ -88,13 +94,9 @@ const todo = (function () {
         objNode.classList.add("app-todo", "todos");
         let header = HTML`<div class="todos__form">
                 <div class="todos__input">
-                    <icon class="todos__icon">
-                        <i class="fa-solid fa-pen fa-sm"></i>
-                    </icon>
+                    <icon class="todos__icon">${ICON.pen}</icon>
                     <input type="text" todos-input-for="${id}" placeholder="What do you want to do">
-                    <button class="todos__button-plain todos__button-plain--posEnd" todos-form-command="clear">
-                        <i class="fa-solid fa-xmark"></i>
-                    </button>
+                    <button class="todos__button-plain todos__button-plain--posEnd" todos-form-command="clear" title="clear">${ICON.x}</button>
                 </div>
                 <div class="todos__filter">
                     <button class="todos__filter-item" todos-filter-option="active">active</button>
@@ -111,7 +113,7 @@ const todo = (function () {
                         
                         <div class="swiper-slide todos__view-item" todos-view-item="active" >
                             <div class="todos__header">
-                                <img src="./../app/img/folder.svg" alt="active list" class="todos__icon todos__icon--folder">
+                                <div alt="active list" class="todos__icon todos__icon--folder">${ICON.folder}</div>
                                 <p class="todos__title">active list</p>
                                 <div class="todos__separator"></div>
                                 <div class="todos__number"></div>
@@ -125,7 +127,7 @@ const todo = (function () {
 
                         <div class="swiper-slide todos__view-item" todos-view-item="done" >
                             <div class="todos__header">
-                                <img src="./../app/img/folder.svg" alt="active list" class="todos__icon todos__icon--folder">
+                                <div alt="active list" class="todos__icon todos__icon--folder">${ICON.folder}</div>
                                 <p class="todos__title">completed</p>
                                 <div class="todos__separator"></div>
                                 <div class="todos__number"></div>
@@ -139,7 +141,7 @@ const todo = (function () {
 
                         <div class="swiper-slide todos__view-item" todos-view-item="all" >
                             <div class="todos__header">
-                                <img src="./../app/img/folder.svg" alt="active list" class="todos__icon todos__icon--folder">
+                                <div alt="active list" class="todos__icon todos__icon--folder">${ICON.folder}</div>
                                 <p class="todos__title">all todos</p>
                                 <div class="todos__separator"></div>
                                 <div class="todos__number"></div>
@@ -208,14 +210,14 @@ const todo = (function () {
                             <input type="text" class="todos__item-edit">
                             <span title="${itemName}">${itemName}</span>
                         </p>
-                        <button class="todos__button-plain todos__button-plain--posEnd" title="finish editing this to-do" todos-item-command="cancel">
-                            <i class="fa-solid fa-xmark"></i>
+                        <button class="todos__button-plain todos__button-plain--posEnd" title="cancel editing" todos-item-command="cancel">
+                            ${ICON.x}
                         </button>
                         <button class="todos__button-plain todos__button-plain--posEnd" title="delete this to-do" todos-item-command="delete">
-                            <i class="fa-solid fa-xmark"></i>
+                            ${ICON.x}
                         </button>
                         <button class="todos__button-plain todos__button-plain--posEnd" title="finish editing this to-do" todos-item-command="edit">
-                            <i class="fa-solid fa-check"></i>
+                            ${ICON.check}
                         </button>
                     </div>
                 </div>`;
@@ -228,14 +230,14 @@ const todo = (function () {
                             <input type="text" class="todos__item-edit">
                             <span title="${itemName}">${itemName}</span>
                         </p>
-                        <button class="todos__button-plain todos__button-plain--posEnd" title="finish editing this to-do" todos-item-command="cancel">
-                            <i class="fa-solid fa-xmark"></i>
+                        <button class="todos__button-plain todos__button-plain--posEnd" title="cancel editing" todos-item-command="cancel">
+                            ${ICON.x}
                         </button>
                         <button class="todos__button-plain todos__button-plain--posEnd" title="delete this to-do" todos-item-command="delete">
-                            <i class="fa-solid fa-xmark"></i>
+                            ${ICON.x}
                         </button>
                         <button class="todos__button-plain todos__button-plain--posEnd" title="finish editing this to-do" todos-item-command="edit">
-                            <i class="fa-solid fa-check"></i>
+                            ${ICON.check}
                         </button>
                     </div>
                 </div>`;
