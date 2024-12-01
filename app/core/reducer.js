@@ -1,7 +1,7 @@
 export default function todoReducer (state, action, ...args) {
     //const ul = state;
     const _args = args[0];
-    const [itemID, itemName] = _args;
+    const [itemID, valToChange] = _args;
 
     function pos(itemID) {
         const i = state.todoList.findIndex(it=>{
@@ -19,9 +19,21 @@ export default function todoReducer (state, action, ...args) {
             return state;
             break;
         case "method:modify":
-            const i = pos(itemID);
-            state.todoList[i].name = itemName; 
+            {
+                const i = pos(itemID);
+                state.todoList[i].name = valToChange; 
+            }
             return state;
+            break;
+        case "method:status":
+            {
+                const i = pos(itemID);
+                state.todoList[i].status = valToChange; 
+            }
+            
+            return state;
+
+            
             break;
         default:
             return state;

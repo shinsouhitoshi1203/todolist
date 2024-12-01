@@ -170,14 +170,7 @@ const todo = (function () {
 
         
     }
-    {/* <div class="todos__list">
-        ${renderItem({itemType: "active", itemName: "go to cgv cinema d.10"})}
-        ${renderItem({itemType: "active", itemName: "go to cgv cinema d.10"})}
-        ${renderItem({itemType: "active", itemName: "wet theshuvhsdgjksvkjsd"})}
-        ${renderItem({itemType: "active", itemName: "Lorem ipsum"})}
-        ${renderItem({itemType: "active", itemName: "go to cgv cinema d.10"})}
-        ${renderItem({itemType: "active", itemName: "Lorem ipsum"})}
-    </div> */}
+    
     function identify(appData = {}) { 
         
         appData.objNode.setAttribute("todos-id", appData.id);
@@ -469,6 +462,7 @@ const todo = (function () {
                             request(appData).fakeUpdate();
                             formOption(appData).unlockInput(obj);
                             formOption(appData).clearInput(obj);
+                            formOption(appData).setClearButton(false);
                         }
                     )
                 } 
@@ -492,6 +486,73 @@ const todo = (function () {
                         }
                     )
                 } 
+            },
+            async check(obj) {
+                let query = "";
+                let requireDelete = true;
+                const itemID = todo(obj).item.id;
+                const itemStatus = todo(obj).item.status;
+
+                async function fixStatus(itemID,status = "done") {
+                    appData.allowEvent = false;
+                    todo(obj).item.status=status;
+                    return new Promise(
+                        function (resolve) {
+                            dispatch("method:status", itemID, status);
+                            const data = {itemID, itemType: status}
+                            setTimeout(()=>{resolve(data)}, 200);
+
+                        }
+                    )
+                    
+                }
+                
+                switch (todoViewMode) {
+                    case 2: // just do request, no need to delete
+                        query = (itemStatus=="active")?"done":"active";
+                        requireDelete = false;
+                        break;
+                    case 1: 
+                        // do request, delete the node
+                        
+                        if (itemStatus=="done") {
+                            query = "active";
+                        } else {
+                            return -1;
+                        }
+                        break;
+                    case 0:default: 
+                        // do request, delete the node
+                        if (itemStatus=="active") {
+                            query = "done";
+                        } else {
+                            return -1;
+                        }
+                        break;
+                }
+
+                const dataResult = {};
+                (async ()=>{
+                    
+                    try {
+                        const data = await fixStatus(itemID,query);
+                        // console.log(data);
+                        appData.allowEvent = true;
+                        Object.assign(dataResult, data);
+                    } catch (e) {
+                        console.log(e);
+                    } finally {
+                        if (requireDelete) {
+                            this.fakeDelete(dataResult.itemID);
+                        } 
+                    }
+                })();
+                
+                
+                //         todo(obj).item.status = "done"
+                
+                
+                // todo(obj).item.status = "done"
             },
             fakeRender(data) {
                 if (todoViewMode == 0 || todoViewMode == 2 ) {
@@ -537,10 +598,27 @@ const todo = (function () {
                             )
                         )
                     } else {
-                        console.log(todoItem)
                         todo(todoItem).item.mode = "normal";
                         todo(todoItem).item.name = itemName;
                     }
+                }
+            },
+            fakeDelete(itemID) {
+                const sw = swiperMap[`slideView${(todoViewMode==0)?"Current":"All"}`];
+                const mode = (["active", "done", "all"][todoViewMode]);
+                const inner = view[mode].inner;
+                const container = view[mode].container;
+                const todoItem = interact(appData).list(inner).find(itemID);
+                if (todoItem) {
+                    const l = interact(appData).list(inner).length;
+                    if (l==1) {
+                        inner.innerHTML = TXT.empty;
+                    } else {
+                        todoItem.parentNode.remove();
+                    }
+                    // update
+                    updateListLength(container, mode)(l-1);
+                    sw.update();
                 }
             }
         }
@@ -588,6 +666,9 @@ const todo = (function () {
                         } else {
                             return node;
                         }
+                    },
+                    get length() {
+                        return inner.querySelectorAll(".todos__item").length;
                     }
                 }
             },
@@ -598,7 +679,11 @@ const todo = (function () {
                 this.input.txtBox(inp).renameValue (currentName);
                 
                 // events
-                
+                inp.addEventListener("keydown", (e)=>{
+                    if (e.key=="Escape") {
+                        this.closeEdit(todoItem);
+                    }
+                })
             },
             closeEdit(todoItem) {
                 todo(todoItem).item.mode = "normal";
@@ -654,7 +739,22 @@ const todo = (function () {
     }
 
     function runEvent(appData = {}) {
-        const {objNode,id} = appData;
+        const {objNode,id,allowEvent} = appData;
+        function checkVar() {
+            if (appData.allowEvent == false) {
+                objNode.disabled = false;
+                return false;
+            } else {
+                objNode.disabled = true;
+            }
+        }
+        function validateClearBtn(obj) {
+            if (obj.value!="") {
+                formOption(appData).setClearButton(true);
+            } else {
+                formOption(appData).setClearButton(false);
+            }
+        }
         // click
         objNode.addEventListener("click", function (e) {
             const obj = e.target;
@@ -664,6 +764,7 @@ const todo = (function () {
             } else if (obj.matches('button[todos-form-command="clear"], button[todos-form-command="clear"] *')) {
                 formOption(appData).reset();
             } else if (obj.matches('.todos__item-name span')) {
+                checkVar();
                 // check var moment
                 const IT = findParent(obj, "todos__item");//todoITem
                 if (IT) {
@@ -699,7 +800,16 @@ const todo = (function () {
                 }
             } else if (obj.matches(`input[todos-input-for="${id}"]`)) {
                 interact(appData).blurAll()
-            }
+            } else if (obj.matches('.todos__item-check')) {
+                checkVar();
+                const IT = findParent(obj, "todos__item");//todoITem
+                if (IT) {
+                    // check var (pt.2)
+                    request(appData).check(IT);
+                } else {
+                    throw new Error ("You are an idiot, hahahahahahahha");
+                }
+            } 
         })
         // keypress
         objNode.addEventListener("input", function (e) {
@@ -708,11 +818,7 @@ const todo = (function () {
             if (obj.matches(`input[todos-input-for="${id}"]`)) {
                 // add new object
                 if (key!="Enter") {
-                    if (obj.value!="") {
-                        formOption(appData).setClearButton(true);
-                    } else {
-                        formOption(appData).setClearButton(false);
-                    }
+                    validateClearBtn(obj);
                 }
             } 
         })
@@ -729,9 +835,19 @@ const todo = (function () {
                 // edit new object
                 if (key=="Enter") {
                     request(appData).editItem(obj);
+                    
                 }
             }
-        })
+        });
+        // change 
+        appData.formControls.form.input.onchange = function () {
+            validateClearBtn(this);
+        }
+        appData.formControls.form.input.oninput = function (e) {
+            if (e.key=="Enter") {
+                validateClearBtn(this);
+            } 
+        } 
     }
 
     function pushData(appData = {}, srcData) {
@@ -763,6 +879,7 @@ const todo = (function () {
             // dom objects
             view: {},
             formControls: {},
+            allowEvent: true,
         }
         const reduxMethod = initStore(appData);
         Object.assign(appData, reduxMethod);
@@ -809,3 +926,7 @@ const todo = (function () {
 })();
 
 export default todo;
+
+
+
+// ${renderItem({itemType: "active", itemName: "go to cgv cinema d.10"})}
