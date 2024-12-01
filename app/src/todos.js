@@ -957,7 +957,3 @@ const todo = (function () {
 })();
 
 export default todo;
-
-
-
-// ${renderItem({itemType: "active", itemName: "go to cgv cinema d.10"})}
