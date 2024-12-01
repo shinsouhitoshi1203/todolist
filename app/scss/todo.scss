@@ -1,0 +1,266 @@
+@use "./reset";
+/// variables
+.app-todo {
+    --main: #413F3F;
+    --main-trans: #413F3F99;
+    --second: #f4f4f4;
+    --shadow: 15.965px 11.714px 53.373px 0px rgba(0, 0, 0, 0.20);
+    --space: 16px;
+
+    --uncheck: #C4C4C4;
+    --check: #B5B5BA;
+
+}
+
+%li {
+    display: flex; align-items: center; gap: calc(var(--space) / 2);
+}
+%center {
+    display: flex; align-items: center;justify-content: center;
+}
+
+@mixin lim($l:1) {
+    display: -webkit-box; -webkit-line-clamp: $l; line-clamp: $l; -webkit-box-orient:vertical; overflow: hidden;
+}
+@mixin todo-flex($ai:null, $jc:$ai, $g:null) {
+    display: flex; align-items: $ai; justify-content: $jc; gap: $g;
+}
+/// app: 
+.app-todo {
+    font: inherit;
+    p {padding: 0; margin: 0; font-size: 1.4rem; font-weight: 400;}
+    button {cursor: pointer;}
+    i {font-size: 1.4rem;}
+
+    padding: 40px 30px; max-width: 400px; width: 80%; position: relative; aspect-ratio: 1/1;
+    background: var(--second); box-shadow: var(--shadow); font-weight: 400;
+    &::before{
+        content: ""; display: block; position: absolute; top: 0; left: 0;
+        aspect-ratio: 30.6/1.3;
+        width: 100%; background: url(./../img/layout.svg) center/cover no-repeat;
+    }
+    &__disable-obj {display: none;}
+}
+
+.todos {
+    &__wrapper {
+        display: flex; height: 100%; overflow: hidden;
+        flex-direction: column; 
+        gap: 12px;
+    }
+}
+
+.todos {
+    &__input {
+        padding: {top: 3px; bottom: 3px}; 
+        @extend %li; font-size: 1.4rem;
+        & > * {flex-shrink: 0;}
+        input {flex-grow: 1;}
+    }
+}
+//// view
+.todos {
+    &__view {
+        flex-grow: 1; overflow: hidden;
+        &-item {
+            display: flex; flex-direction: column; gap: 18px;
+        }
+    }
+
+}
+.todos {
+    &__header{
+        @extend %li;
+        flex-shrink: 0;
+        & > * {flex-shrink: 0;}
+    }
+    &__separator {flex-grow: 1; height: 1px; background: #BCBCC370; margin: {left: 5px; right: 5px};}
+    &__number {
+        background: var(--main); color: var(--second); border-radius: 6px; @extend %center;
+        width: 20px;height: 20px; cursor:default;
+        font: {size: 1.1rem; weight: 600};
+    }
+    &__title {font: {size: 1.5rem; weight: 700}; margin: 0;}
+    &__container {flex-grow: 1; overflow: hidden}
+}
+
+.todos {
+    &__button {
+        &-plain {
+            width: 10.5px; display: flex;align-items: center;
+            color: var(--main-trans); 
+            svg {
+                fill: var(--main-trans);
+            }
+            transition: color .3s, fill .3s;
+            cursor: pointer;
+            &--posEnd {padding: 0;}
+            &:hover {
+                color: var(--main); 
+                svg {
+                    fill: var(--main);
+                }
+            }
+        }
+    }
+    &__icon {
+        padding-right: 5px;width: 16px;height: 16px;
+        &--folder {margin-left: -3px; padding: 0; width: 25px;height: 25px;}
+    }
+}
+
+
+/// todo [swiper]
+.todos {
+    $swiper-list:"active", "done", "all";
+    @each $swiper-object in $swiper-list {
+        .swiper[todos-slide-view=#{$swiper-object}] {
+            overflow: hidden; height: 100%;
+        }
+    }
+    .swiper[todos-sliding-container="switch-mode"] {
+        overflow: hidden; height: 100%;
+    }
+    
+}
+
+/// todo views
+.todos {
+    // general settings
+    // &__list {display: grid; grid-gap: 16px;}
+    &__item {
+        @extend %li;
+        &-check {
+            width: 20px; height: 20px; border: 2px solid var(--uncheck); position: relative;
+            @extend %center; border-radius: 6px;  margin-right: 2px;
+            transition: border-color .3s, background .3s;
+            flex-shrink: 0;
+            
+            &:hover {
+                border-color: var(--main-trans);
+                & + p>span::after {transform-origin: left center; transform: scaleX(1);}
+            }
+            &::after {
+                content : ""; display: none; position: absolute;
+                top: 50%; left: 50%; translate: -50% -50%; 
+                width: 12px;height: 8px; background: url(./../img/checked.svg) center / contain no-repeat;
+            }
+        }
+        &-name {
+            position: relative;
+            flex-grow: 1; 
+            // real item's name with animation based on its size
+            span { 
+                word-break: break-all; width: fit-content;
+                @include lim(1); position: relative; cursor: pointer;
+                &::after {
+                    content: ""; display: block; position: absolute;
+                    width: 100%; height: 1px; background: #000;
+                    bottom: -0.3px; left: 0; transition: transform .3s;
+                    transform-origin: right center; transform: scaleX(0);
+                }
+                &:hover::after {
+                    transform-origin: left center; transform: scaleX(1);
+                }
+            }
+        }
+        // please note this is still in normal mode
+        &-edit {
+            z-index: 10;
+            background: var(--second);
+            position: absolute; top: 0;left: 0; width: 100%;
+        }
+
+    }
+    &__filter {
+        @include todo-flex(center,flex-start,4px); margin-top: 8px; margin-bottom: 8px;
+        &-item {
+            border: 1.5px solid var(--uncheck); padding: 2px 5px; font: {weight: 600; size: 1.0rem; } border-radius: 6px; color: var(--uncheck); transition: border-color .3s, background .3s, color .3s, filter .3s;
+            &:hover:not(&--selected) {border-color: var(--main); color: var(--main);}
+            &--selected {
+                background: var(--main); border-color: var(--main); color: var(--second);
+                &:hover{
+                    filter: brightness(1.03);
+                }
+            }
+        }
+    }
+    ///////////////////////////////////////////////////
+    /// todos item with modification for each case  
+    /// ----------------------------------------------
+    /// to see the format for each option, uncollapse 
+    /// the codeblock.
+    ///////////////////////////////////////////////////
+    
+        // status: active
+        // --> display delete button, hide the txtbox and edit button
+        &__item {
+            &[todos-item-mode=normal] &-edit {
+                display: none;
+            }
+            &[todos-item-mode=normal] button[todos-item-command=delete] {
+                display: flex;
+            }
+            &[todos-item-mode=normal] button[todos-item-command=cancel] {
+                display: none;
+            }
+            &[todos-item-mode=normal] button[todos-item-command=edit] {
+                display: none;
+            }
+        }
+
+        // status: done
+        // --> check the check button
+        // --> add line through to item's name, disable hover animation
+        // --> display buttons as in normal mode
+        &__item {
+            &[todos-item-status=done] &-check {
+                background: var(--check); border-color: var(--check);
+                position: relative;
+                &:hover {
+                    border-color: var(--main-trans);
+                    background: var(--main-trans);
+                }
+                &::after {
+                    display: block;
+                }
+            }
+
+            &[todos-item-status=done] &-name {
+                color: var(--check);
+                text-decoration: line-through;
+                span::after {display: none;}
+            }
+
+            &[todos-item-status=done] &-edit {
+                display: none;
+            }
+            &[todos-item-status=done] button[todos-item-command=delete] {
+                display: flex;
+            }
+            &[todos-item-status=done] button[todos-item-command=edit] {
+                display: none;
+            }
+            &[todos-item-status=done] button[todos-item-command=cancel] {
+                display: none;
+            }
+
+        }
+
+        // status: active, edit mode
+        // --> display txtbox to edit and the button to check
+        &__item {
+            &[todos-item-mode=edit] &-edit {
+                display: block;
+            }
+            &[todos-item-mode=edit] button[todos-item-command=delete] {
+                display: none;
+            }
+            &[todos-item-mode=edit] button[todos-item-command=edit] {
+                display: flex;
+            }
+            &[todos-item-mode=edit] button[todos-item-command=cancel] {
+                display: flex;
+            }
+        }
+}

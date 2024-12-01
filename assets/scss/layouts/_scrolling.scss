@@ -3,7 +3,7 @@ main .container {position: relative; }
 
 .scrl {
     z-index: -1;
-    position: absolute; width: calc(100%); height: calc(100vh - 60px); max-height: 700px; min-height: 400px;
+    position: absolute; width: calc(100%); height: calc(100vh - 60px); max-height: 700px; min-height: 500px;
     
     @include o.flex(flex-end, center);
     &__group {

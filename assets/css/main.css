@@ -322,6 +322,9 @@ button, input {
   outline: none;
   background: inherit;
   font: inherit;
+  padding: 0;
+  margin: 0;
+  padding-inline: 0;
 }
 
 a {
@@ -1491,7 +1494,7 @@ main .container {
   width: 100%;
   height: calc(100vh - 60px);
   max-height: 700px;
-  min-height: 400px;
+  min-height: 500px;
   display: flex;
   align-items: flex-end;
   justify-content: center;
@@ -1563,7 +1566,7 @@ main .container {
   transition-duration: 0.3s;
 }
 .button__1:hover {
-  background: #1a0d0d;
+  background: #5a5396;
   color: var(--button-dark-txt);
   scale: 0.98;
   box-shadow: 0px 0.5px 5px rgba(0, 0, 0, 0.8);

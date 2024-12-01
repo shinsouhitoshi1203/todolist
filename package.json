@@ -1,13 +1,13 @@
 {
   "dependencies": {
     "firebase": "^11.0.2",
-    "sass": "^1.81.0"
+    "sass": "^1.81.0",
+    "swiper": "^11.1.15"
   },
   "name": "todos",
   "version": "1.0.0",
   "description": "bruh it's just a boring to-do app",
   "main": "index.js",
-  "devDependencies": {},
   "scripts": {
     "start": "sass -w ./assets/scss:./assets/css ./app/scss:./app/src "
   },

@@ -1,3 +1,11 @@
+@use "./../utils" as o;
+html {
+    background: #816f6f;
+}
 .main {
-    &__app-container {height: calc(100vh - 60px); max-height: 700px; min-height: 400px;}
+    &__app-container {
+        height: calc(100vh - 60px); max-height: 700px; min-height: 500px;
+        @include o.flex(center);
+    }
+    
 }

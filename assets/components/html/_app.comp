@@ -1,0 +1,10 @@
+// only for 
+
+<div class="todos__item" item-status="active">
+    <button class="todos__item-check" title="mark as done"></button>
+    <p class="todos__item-name" title=" [item's name] ">
+        <input type="text" class="todos__item-edit">
+        <span> [item's name] </span>
+    </p>
+    <button class="todos__button-plain todos__button-plain--posEnd" title="delete this to-do"><i class="fa-solid fa-check"></i></button>
+</div>
