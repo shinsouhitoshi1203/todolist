@@ -1,37 +1,47 @@
-function init() {
-    return {
-        todoList: [
-            {
-                id: "vjivioi849-343423-222-33s3",
-                name: "Make a cupcake dish",
-                status: "done"
-            },
-            {
-                id: "44rfvvccc-33ecddd-33dd-ccd",
-                name: "Finish task 3 / chapter 32",
-                status: "done"
-            },
-            {
-                id: "de4vvvffd-33ecddd-eeef-tee",
-                name: "Order a hamburger",
-                status: "active"
-            },
-        ]
+export default function todoReducer (state, action, ...args) {
+    //const ul = state;
+    const _args = args[0];
+    const [itemID, valToChange] = _args;
+
+    function pos(itemID) {
+        const i = state.todoList.findIndex(it=>{
+            return it.id==itemID;
+        });
+        if (i>=0) {
+            return i;
+        } else {
+            throw new Error ("the todo doesnt exist")
+        }
     }
-}
-
-
-export default function todoReducer (state = init(), action, ...arg) {
-    const ul = state.todoList;
     switch (action) {
-        case "method:view-active": 
-            return ul.filter((e)=>e.status=="active")
-            break;
         case "method:add": 
-            return ul.filter((e)=>e.status=="active")
+            state.todoList.push(_args[0]);
+            return state;
+            break;
+        case "method:modify":
+            {
+                const i = pos(itemID);
+                state.todoList[i].name = valToChange; 
+            }
+            return state;
+            break;
+        case "method:status":
+            {
+                const i = pos(itemID);
+                state.todoList[i].status = valToChange; 
+            }
+            
+            return state;
+            break;
+        case "method:delete":
+            {
+                const i = pos(itemID);
+                state.todoList.splice(i,1)
+            }
+            return state;
             break;
         default:
-            return ul;
+            return state;
             break;
     }
 

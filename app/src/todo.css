@@ -42,6 +42,7 @@ a {
 
 .app-todo {
   font: inherit;
+  color: var(--main);
   padding: 40px 30px;
   max-width: 400px;
   width: 80%;
@@ -72,6 +73,9 @@ a {
   aspect-ratio: 30.6/1.3;
   width: 100%;
   background: url(./../img/layout.svg) center/cover no-repeat;
+}
+.app-todo__disable-obj {
+  display: none !important;
 }
 
 .todos__wrapper {
@@ -138,9 +142,15 @@ a {
 }
 
 .todos__button-plain {
+  width: 10.5px;
+  display: flex;
+  align-items: center;
   color: var(--main-trans);
-  transition: color 0.3s;
+  transition: color 0.3s, fill 0.3s;
   cursor: pointer;
+}
+.todos__button-plain svg {
+  fill: var(--main-trans);
 }
 .todos__button-plain--posEnd {
   padding: 0;
@@ -148,12 +158,19 @@ a {
 .todos__button-plain:hover {
   color: var(--main);
 }
+.todos__button-plain:hover svg {
+  fill: var(--main);
+}
 .todos__icon {
   padding-right: 5px;
+  width: 16px;
+  height: 16px;
 }
 .todos__icon--folder {
   margin-left: -3px;
   padding: 0;
+  width: 25px;
+  height: 25px;
 }
 
 .todos .swiper[todos-slide-view=active] {
@@ -181,6 +198,7 @@ a {
   border-radius: 6px;
   margin-right: 2px;
   transition: border-color 0.3s, background 0.3s;
+  flex-shrink: 0;
 }
 .todos__item-check:hover {
   border-color: var(--main-trans);
@@ -273,7 +291,10 @@ a {
   display: none;
 }
 .todos__item[todos-item-mode=normal] button[todos-item-command=delete] {
-  display: block;
+  display: flex;
+}
+.todos__item[todos-item-mode=normal] button[todos-item-command=cancel] {
+  display: none;
 }
 .todos__item[todos-item-mode=normal] button[todos-item-command=edit] {
   display: none;
@@ -301,9 +322,12 @@ a {
   display: none;
 }
 .todos__item[todos-item-status=done] button[todos-item-command=delete] {
-  display: block;
+  display: flex;
 }
 .todos__item[todos-item-status=done] button[todos-item-command=edit] {
+  display: none;
+}
+.todos__item[todos-item-status=done] button[todos-item-command=cancel] {
   display: none;
 }
 .todos__item[todos-item-mode=edit] .todos__item-edit {
@@ -313,7 +337,10 @@ a {
   display: none;
 }
 .todos__item[todos-item-mode=edit] button[todos-item-command=edit] {
-  display: block;
+  display: flex;
+}
+.todos__item[todos-item-mode=edit] button[todos-item-command=cancel] {
+  display: flex;
 }
 
 /*# sourceMappingURL=todo.css.map */
