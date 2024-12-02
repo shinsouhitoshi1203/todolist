@@ -42,6 +42,7 @@ a {
 
 .app-todo {
   font: inherit;
+  color: var(--main);
   padding: 40px 30px;
   max-width: 400px;
   width: 80%;
@@ -74,7 +75,7 @@ a {
   background: url(./../img/layout.svg) center/cover no-repeat;
 }
 .app-todo__disable-obj {
-  display: none;
+  display: none !important;
 }
 
 .todos__wrapper {
