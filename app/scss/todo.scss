@@ -27,7 +27,7 @@
 }
 /// app: 
 .app-todo {
-    font: inherit;
+    font: inherit; color: var(--main);
     p {padding: 0; margin: 0; font-size: 1.4rem; font-weight: 400;}
     button {cursor: pointer;}
     i {font-size: 1.4rem;}
