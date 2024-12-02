@@ -499,6 +499,7 @@ const todo = (function () {
                 async function handling(itemID,status = "done") {
                     appData.allowEvent = false;
                     todo(obj).item.status=status;
+                    todo(obj).item.mode="normal";
                     return new Promise(
                         function (resolve) {
                             dispatch("method:status", itemID, status);
